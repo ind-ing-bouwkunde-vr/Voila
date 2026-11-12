@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Voilà</title>
+<meta name="theme-color" content="#9c5b6e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Voilà">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f1ee;--card:#fffdfb;--ink:#2d2327;--muted:#8a7d82;--line:#e9e0dc;
+  --accent:#9c5b6e;--accent2:#b98292;--accent-soft:#f3e6ea;
+  --imp:#b88a52;--imp-soft:#f7efe3;--red:#b5475c;--red-soft:#f8e3e6;--orange:#b07a3e;--orange-soft:#f7efe3;
+  --violet:#6e5d7e;--violet-soft:#eeeaf2;
+  --shadow:0 1px 2px rgba(60,30,40,.05),0 6px 20px rgba(60,30,40,.06);
+  --shadow-lg:0 10px 40px rgba(60,30,40,.13);
+  --r:20px;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#18141a;--card:#221d24;--ink:#efe8ea;--muted:#a8999f;--line:#352d36;
+  --accent:#d495a8;--accent2:#9c5b6e;--accent-soft:#36242c;
+  --imp:#dcb07a;--imp-soft:#352b1f;--red:#f08c9c;--red-soft:#3a2026;--orange:#dcb07a;--orange-soft:#352b1f;
+  --violet:#b8a6cc;--violet-soft:#2b2533;
+  --shadow:0 1px 2px rgba(0,0,0,.35);--shadow-lg:0 10px 40px rgba(0,0,0,.55);
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;color:var(--ink);font-family:Nunito,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.45}
+body{background:var(--bg);background-image:radial-gradient(900px 500px at 100% -10%,color-mix(in srgb,var(--accent2) 10%,transparent),transparent 60%),radial-gradient(700px 400px at -10% 10%,color-mix(in srgb,var(--violet) 9%,transparent),transparent 60%);background-attachment:fixed;min-height:100vh}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+h1,h2,.ftitle,.hero h2,.weeknav b,.ring b{font-family:Fraunces,Georgia,serif}
+#app{padding:env(safe-area-inset-top) 0 calc(110px + env(safe-area-inset-bottom))}
+header{max-width:780px;margin:0 auto;padding:20px 20px 8px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+header h1{font-size:22px;margin:0;font-weight:600;font-style:italic;display:flex;align-items:center;gap:9px}
+header h1 i{width:32px;height:32px;border-radius:50%;font-style:normal;background:linear-gradient(135deg,var(--accent2),var(--accent));display:grid;place-items:center;color:#fff;font-style:normal;font-size:16px;box-shadow:var(--shadow)}
+.sync{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);padding:5px 11px;border-radius:99px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}.dot.warn{background:var(--orange)}
+main{max-width:780px;margin:0 auto;padding:0 20px}
+main.wide,header.wide{max-width:1320px}
+h2.big{font-size:34px;margin:14px 0 2px;font-weight:500;font-style:italic;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 18px}
+h3{font-size:17px;color:var(--ink);margin:28px 2px 10px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h3::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--accent)}
+h3 .cnt{font-size:13px;color:var(--muted);font-weight:700;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:1px 9px}
+h3 .mini{margin-left:auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+/* hero */
+.hero{margin:10px 0 18px;padding:22px 22px;border-radius:26px;color:#fff;background:linear-gradient(135deg,#b88593 0%,#9c5b6e 55%,#6e5d7e 100%);box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:18px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-50px;top:-70px;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero>div:first-child{flex:1;min-width:0;position:relative;z-index:1}
+.hdate{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;opacity:.8}
+.hero h2{margin:2px 0 6px;font-size:36px;font-weight:500;line-height:1.1;font-style:italic}
+.hero p{margin:0;opacity:.92;font-weight:600}
+.hring{position:relative;width:92px;height:92px;flex:none;z-index:1}
+.hring svg{transform:rotate(-90deg)}
+.hring b{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-size:20px;font-weight:800;line-height:1}
+.hring b small{display:block;font-size:11px;font-weight:700;opacity:.85;margin-top:3px}
+/* add */
+.add{display:flex;gap:8px;align-items:center;padding:7px 7px 7px 18px;border-radius:18px;transition:box-shadow .2s,border-color .2s}
+.add:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft),var(--shadow)}
+.add input{flex:1;border:0;background:none;outline:none;padding:12px 0;font-size:18px;min-width:0}
+.add .plus{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;font-size:26px;font-weight:700;flex:none;box-shadow:0 4px 12px color-mix(in srgb,var(--accent) 35%,transparent)}
+.hint{font-size:13.5px;color:var(--muted);margin:8px 6px 0}
+.hint b{color:var(--ink)}
+.focusbtn{width:100%;margin:16px 0 4px;padding:17px;border-radius:18px;background:linear-gradient(135deg,#5b4a68,#3e3347);color:#fff;font-weight:800;font-size:18px;box-shadow:0 8px 22px color-mix(in srgb,var(--violet) 35%,transparent);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .15s}
+.focusbtn:active{transform:scale(.98)}
+/* tasks */
+.list{display:flex;flex-direction:column;gap:8px}
+.list>.task{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.task{display:flex;align-items:center;gap:12px;padding:11px 10px 11px 14px;transition:transform .15s,opacity .2s}
+.list>.task:hover{transform:translateY(-1px)}
+.list>.task.imp{border-color:color-mix(in srgb,var(--imp) 45%,var(--line));background:linear-gradient(90deg,var(--imp-soft),var(--card) 75%)}
+.check{width:30px;height:30px;flex:none;border-radius:50%;border:2.5px solid color-mix(in srgb,var(--muted) 60%,transparent);display:grid;place-items:center;font-weight:800;color:#fff;font-size:16px;transition:.15s}
+.check:hover{border-color:var(--accent);background:var(--accent-soft)}
+.task.done .check,.step.done .check{background:var(--accent);border-color:var(--accent)}
+.task.done{opacity:.6}
+.task.done .ttl{text-decoration:line-through;color:var(--muted)}
+.tbody{flex:1;min-width:0;cursor:pointer;padding:3px 0}
+.ttl{font-weight:700;overflow-wrap:break-word;hyphens:auto}
+.acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.chip{font-size:12.5px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--bg);color:var(--muted);white-space:nowrap}
+.chip.red{background:var(--red-soft);color:var(--red)}
+.chip.orange{background:var(--orange-soft);color:var(--orange)}
+.star{font-size:22px;color:color-mix(in srgb,var(--muted) 60%,transparent);width:38px;height:38px;flex:none;border-radius:12px}
+.star:hover{background:var(--imp-soft);color:var(--imp)}
+.task.imp .star{color:var(--imp)}
+.mini{font-size:13px;font-weight:800;padding:8px 12px;border-radius:11px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.mini.grey{background:var(--bg);color:var(--muted)}
+.box{padding:13px 16px;border-radius:16px;margin-top:12px}
+.box.warn{background:var(--orange-soft);color:var(--orange);font-weight:700}
+.empty{padding:22px 18px;text-align:center;color:var(--muted);border-style:dashed;box-shadow:none;background:color-mix(in srgb,var(--card) 60%,transparent)}
+.toggle{color:var(--muted);font-weight:800;font-size:14px;padding:14px 4px 8px}
+/* week */
+.weeknav{display:flex;align-items:center;gap:10px;margin:8px 0 16px;flex-wrap:wrap}
+.weeknav .arrow{width:44px;height:44px;border-radius:14px;background:var(--card);border:1px solid var(--line);font-size:22px;font-weight:800;box-shadow:var(--shadow)}
+.weeknav b{font-size:22px;font-weight:500;font-style:italic;flex:1;text-align:center;min-width:180px}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
+@media (max-width:1150px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:780px){.grid{grid-template-columns:1fr 1fr}}
+@media (max-width:540px){.grid{grid-template-columns:1fr}}
+.day{display:flex;flex-direction:column;min-height:170px;overflow:hidden;--dc:var(--accent)}
+.day:nth-child(1){--dc:#c99aa6}.day:nth-child(2){--dc:#a99bc0}.day:nth-child(3){--dc:#cfa98f}.day:nth-child(4){--dc:#9c5b6e}.day:nth-child(5){--dc:#93a9c0}.day:nth-child(6){--dc:#98b3a3}.day:nth-child(7){--dc:#b7a3c4}
+.dayhead{padding:12px 14px 10px;display:flex;flex-wrap:wrap;gap:2px 8px;justify-content:space-between;align-items:center;border-top:5px solid var(--dc)}
+.dayhead b{text-transform:capitalize;font-size:16px}
+.dayhead small{color:var(--muted);font-weight:800;font-size:12.5px}
+.day.today{box-shadow:0 0 0 2px var(--dc),var(--shadow-lg)}
+.day.today .dayhead{background:color-mix(in srgb,var(--dc) 12%,transparent)}
+.day.past{opacity:.6}
+.day .task{padding:8px 8px;gap:9px;font-size:15px;margin:0 6px;border-radius:12px;align-items:flex-start}
+.day .chip{white-space:normal}
+.day .dayhead small{white-space:nowrap}
+.day .task:hover{background:var(--bg)}
+.day .check{width:24px;height:24px;font-size:13px;border-width:2px}
+.day .star{display:none}
+.day .task.imp .ttl::before{content:"★ ";color:var(--imp)}
+.day .meta .chip{font-size:11.5px}
+.dayadd{margin-top:auto;padding:6px}
+.dayadd input{width:100%;border:0;background:var(--bg);border-radius:12px;padding:10px 12px;outline:none;font-size:15px}
+.dayadd input:focus{box-shadow:0 0 0 2px var(--dc)}
+/* forms */
+textarea{width:100%;border:0;background:none;outline:none;resize:vertical;min-height:130px;padding:16px 18px;font-size:16px;line-height:1.7}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{padding:13px 20px;border-radius:14px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;font-weight:800;box-shadow:0 4px 12px color-mix(in srgb,var(--accent) 30%,transparent)}
+input[type=date]{border:1px solid var(--line);border-radius:12px;padding:9px 11px;background:var(--bg)}
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;padding:0 12px calc(12px + env(safe-area-inset-bottom));z-index:5;pointer-events:none}
+nav .in{display:flex;max-width:540px;width:100%;gap:4px;padding:6px;border-radius:24px;background:color-mix(in srgb,var(--card) 85%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);box-shadow:var(--shadow-lg);pointer-events:auto}
+nav button{flex:1;padding:7px 2px;border-radius:18px;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:12.5px;font-weight:800;color:var(--muted);transition:background .2s}
+nav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+nav button.on{color:#fff;background:linear-gradient(135deg,var(--accent2),var(--accent))}
+nav .badge{font-size:10.5px;background:var(--red);color:#fff;border-radius:99px;padding:0 6px;margin-left:3px}
+/* sheet */
+.overlay{position:fixed;inset:0;background:rgba(20,20,25,.4);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:10;display:flex;align-items:flex-end;justify-content:center}
+.overlay[hidden]{display:none}
+.sheet{background:var(--card);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:26px 26px 0 0;padding:22px 20px calc(20px + env(safe-area-inset-bottom));box-shadow:var(--shadow-lg);animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:0}}
+@media (min-width:700px){.overlay{align-items:center}.sheet{border-radius:26px}}
+.sheet .tin{width:100%;font-size:23px;font-weight:800;border:0;border-bottom:2px solid var(--line);padding:6px 0 12px;outline:none;background:none}
+.sheet .tin:focus{border-color:var(--accent)}
+.sheet label{display:block;font-size:14px;font-weight:800;color:var(--muted);margin:20px 0 9px}
+.chips{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.pick{padding:9px 14px;border-radius:12px;background:var(--bg);font-weight:700;font-size:15px;border:1px solid transparent}
+.pick.on{background:var(--accent);color:#fff}
+.pick.impon{background:var(--imp);color:#fff}
+.step{display:flex;align-items:center;gap:10px;padding:7px 0}
+.step .check{width:26px;height:26px;font-size:14px}
+.step.done span{text-decoration:line-through;color:var(--muted)}
+.step span{flex:1}
+.step .x{color:var(--muted);font-size:20px;width:30px}
+.stepadd{width:100%;border:0;border-radius:12px;padding:11px 13px;background:var(--bg);outline:none;margin-top:4px}
+.sheetfoot{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.danger{color:var(--red);font-weight:800;padding:12px 6px}
+/* focus */
+#focus{position:fixed;inset:0;z-index:20;background:var(--bg);background-image:radial-gradient(800px 600px at 50% 0%,var(--violet-soft),transparent 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(20px + env(safe-area-inset-top)) 22px calc(20px + env(safe-area-inset-bottom));text-align:center;overflow:auto}
+#focus[hidden]{display:none}
+.fclose{position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;font-size:15px;font-weight:800;color:var(--muted);padding:10px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
+.flabel{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--violet);background:var(--violet-soft);padding:6px 14px;border-radius:99px}
+.ftitle{font-size:clamp(28px,6vw,46px);font-weight:500;margin:16px 0 20px;max-width:720px;overflow-wrap:anywhere;line-height:1.15}
+.fsteps{text-align:left;max-width:440px;width:100%;margin:0 auto 16px}
+.ring{position:relative;width:160px;height:160px;margin:6px auto 12px}
+.ring svg{transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:32px;font-weight:800;font-family:Outfit,sans-serif}
+.factions{display:flex;flex-direction:column;gap:12px;width:100%;max-width:420px;margin-top:18px}
+.factions .btn{padding:18px;font-size:20px;border-radius:18px}
+.fsmall{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+/* toast & confetti */
+#toast{position:fixed;left:50%;bottom:calc(110px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:16px;font-weight:800;opacity:0;transition:.25s;z-index:30;pointer-events:none;max-width:90vw;text-align:center;box-shadow:var(--shadow-lg)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.conf{position:fixed;z-index:31;pointer-events:none;width:7px;height:7px;border-radius:50%;animation:fly 1s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}}
+@media (max-width:520px){.hero{padding:18px}.hero h2{font-size:28px}.hring{width:80px;height:80px}h2.big{font-size:28px}}
+@media (prefers-reduced-motion:reduce){.conf{display:none}*{transition:none!important;animation:none!important}}
+
+.les{display:flex;flex-wrap:wrap;align-items:baseline;gap:1px 8px;margin:6px 6px 0;padding:8px 10px;border-radius:11px;background:var(--violet-soft);border-left:3px solid var(--violet);cursor:pointer;font-size:14px}
+.les .lt{font-weight:800;color:var(--violet);font-variant-numeric:tabular-nums;font-size:12.5px}
+.les .ln{font-weight:700;flex:1 1 100%}
+.les .lp{font-size:12.5px;color:var(--muted)}
+.les.past{opacity:.5}
+.lesrow .les{margin:0 0 8px;font-size:15.5px;padding:11px 14px}
+.lesrow .les .ln{flex:1 1 auto}
+.dayadd{display:flex;gap:6px}
+.lesadd{font-size:13px;font-weight:800;color:var(--violet);background:var(--violet-soft);border-radius:12px;padding:0 11px;white-space:nowrap}
+.copybtn{font-size:13.5px;font-weight:800;color:var(--violet);background:var(--violet-soft);border-radius:12px;padding:10px 14px}
+.sheettag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);background:var(--violet-soft);padding:4px 10px;border-radius:99px;margin-bottom:10px}
+input[type=time]{border:1px solid var(--line);border-radius:12px;padding:9px 11px;background:var(--bg)}
+#auth{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+#auth[hidden],#app[hidden]{display:none}
+.authbox{width:100%;max-width:400px;padding:32px 26px;text-align:center}
+.alogo{width:58px;height:58px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;color:#fff;font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--accent2),var(--accent));box-shadow:var(--shadow)}
+.authbox h2{font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:500;font-size:32px;margin:0}
+.authbox .sub{margin:4px 0 18px}
+#authform{display:flex;flex-direction:column;gap:10px}
+#authform input{border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:14px 16px;font-size:16px;outline:none;width:100%}
+#authform input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+#authform .btn{margin-top:4px;padding:15px}
+#authform .btn:disabled{opacity:.6}
+.aerr{color:var(--red);font-weight:700;font-size:14px;min-height:1.2em;text-align:left;padding:0 4px}
+.aerr.ok{color:var(--accent)}
+.alinks{display:flex;flex-direction:column;gap:4px;margin-top:16px}
+.alinks button{color:var(--muted);font-size:14.5px;padding:7px}
+.alinks b{color:var(--accent)}
+.hright{display:flex;gap:8px;align-items:center}
+.acct{width:36px;height:36px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:15px;text-transform:uppercase}
+.setup{max-width:520px;text-align:left;padding:28px}
+.setup code{background:var(--bg);padding:2px 6px;border-radius:6px}
+@media (max-width:820px){input,textarea{font-size:16px!important}}
+@media (max-width:480px){.stxt{display:none}.sync{padding:9px}header h1{font-size:20px}}
+</style>
+</head>
+<body>
+<div id="auth" hidden></div>
+<div id="app" hidden></div>
+<div id="sheetwrap" class="overlay" hidden><div class="sheet" id="sheet"></div></div>
+<div id="focus" hidden></div>
+<div id="toast"></div>
+<script type="module">
+import {firebaseConfig} from "./config.js";
+// ---------- helpers ----------
+const pad=n=>String(n).padStart(2,'0');
+const ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>ds(new Date());
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ds(d)};
+const monday=s=>{const d=parse(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return ds(d)};
+const diff=(a,b)=>Math.round((parse(b)-parse(a))/86400000);
+const fmt=(s,o)=>parse(s).toLocaleDateString('nl-BE',o);
+const shortDate=s=>fmt(s,{weekday:'short',day:'numeric',month:'short'});
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtMin=m=>m<60?m+' min':(Math.floor(m/60)+'u'+(m%60?' '+(m%60)+'m':''));
+const newId=()=>'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const CHEERS=['Voilà, weer eentje.','Voilà, afgevinkt.','Voilà! Weer een stap verder.','Voilà, goed bezig.','Voilà, eentje minder.','Voilà, netjes gedaan.'];
+const MOTTO=['Eén ding tegelijk. Dat is genoeg.','Klein beginnen telt ook.','Je hoeft niet alles vandaag te doen.','Kies je top 3, de rest is bonus.','Vijf minuten starten is al winst.','Af is beter dan perfect.','Lijst leeg in je hoofd = rust in je hoofd.'];
+
+const ICON={"sun": '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>', "cal": '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>', "clock": '<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>', "tray": '<svg viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 13h5l1.5 2.5h5L16 13h5"/></svg>'};
+// ---------- state ----------
+const S={tasks:{},view:'vandaag',week:0,showDone:false,mode:'loading',focusOpen:false,focusId:null,editId:null,les:null,lesNew:false,delArm:false,timer:null,tInt:null};
+const VIEWS=['vandaag','week','deadlines','inbox'];
+const isLes=t=>t.kind==='les';
+const all=()=>Object.values(S.tasks).filter(t=>!isLes(t));
+const lessons=()=>Object.values(S.tasks).filter(isLes);
+const lesOn=d=>lessons().filter(l=>l.date===d).sort((a,b)=>(a.start||'')<(b.start||'')?-1:1);
+const nowHM=()=>{const n=new Date();return pad(n.getHours())+':'+pad(n.getMinutes())};
+const lesHtml=(l,past)=>`<div class="les ${past?'past':''}" data-act="editles" data-id="${l.id}"><span class="lt">${esc(l.start||'')}${l.end?'–'+esc(l.end):''}</span><span class="ln">${esc(l.title)}</span>${l.place?`<span class="lp">${esc(l.place)}</span>`:''}</div>`;
+const sortT=(a,b)=>(b.important?1:0)-(a.important?1:0)||(a.order||a.created||0)-(b.order||b.created||0);
+
+// ---------- storage (Firebase) ----------
+const FB='https://www.gstatic.com/firebasejs/10.12.2/';
+let remote=null,unsub=null,auth=null,A=null,USER=null;
+S.authMode='login';S.acct=false;
+function syncErr(e){console.error(e);S.mode='error';render()}
+function writeRemote(t){const {id,...o}=t;remote.set(id,o).catch(syncErr)}
+function put(t){S.tasks[t.id]=t;if(remote)writeRemote(t);render()}
+function upd(id,patch){const t=S.tasks[id];if(t)put({...t,...patch})}
+function del(id){delete S.tasks[id];if(remote)remote.del(id).catch(syncErr);render()}
+function addTask(title,extra={}){
+  title=title.trim();if(!title)return;
+  const t={id:newId(),title,date:null,deadline:null,done:false,doneAt:null,important:false,est:null,steps:[],created:Date.now(),order:Date.now(),...extra};
+  put(t);
+}
+const $auth=()=>document.getElementById('auth'),$appEl=()=>document.getElementById('app');
+function showScreen(html){$appEl().hidden=true;const a=$auth();a.hidden=false;a.innerHTML=html}
+function showApp(){$auth().hidden=true;$appEl().hidden=false}
+function showSetup(){showScreen(`<div class="card setup"><div class="alogo">✓</div><h2 style="font-family:Fraunces,serif;font-style:italic;font-weight:500;margin:0 0 8px">Bijna klaar</h2><p>De app is nog niet gekoppeld aan Firebase. Vul in <code>config.js</code> je Firebase-gegevens in. In de <b>README</b> staat stap voor stap hoe.</p></div>`)}
+function authHTML(){
+  const m=S.authMode;
+  return `<div class="card authbox"><div class="alogo">✓</div><h2>Voilà</h2>
+  <p class="sub">${m==='register'?'Maak een gratis account aan':m==='reset'?'We sturen je een link om een nieuw wachtwoord te kiezen':'Meld je aan om verder te gaan'}</p>
+  <form id="authform" novalidate>
+   <input type="email" id="a-mail" placeholder="E-mailadres" autocomplete="email" autocapitalize="off" required>
+   ${m!=='reset'?`<input type="password" id="a-pw" placeholder="Wachtwoord${m==='register'?' (minstens 6 tekens)':''}" autocomplete="${m==='register'?'new-password':'current-password'}" required>`:''}
+   ${m==='register'?`<input type="password" id="a-pw2" placeholder="Herhaal wachtwoord" autocomplete="new-password" required>`:''}
+   <div class="aerr" id="a-err"></div>
+   <button class="btn" type="submit">${m==='register'?'Account aanmaken':m==='reset'?'Stuur link':'Aanmelden'}</button>
+  </form>
+  <div class="alinks">${m==='login'?`<button data-act="amode" data-v="register">Nog geen account? <b>Maak er een</b></button><button data-act="amode" data-v="reset">Wachtwoord vergeten?</button>`:`<button data-act="amode" data-v="login">← Terug naar aanmelden</button>`}</div></div>`;
+}
+function showAuth(){showScreen(authHTML());setTimeout(()=>{const e=document.getElementById('a-mail');e&&e.focus()},50)}
+const AERR={'auth/invalid-email':'Dat e-mailadres klopt niet.','auth/missing-email':'Vul je e-mailadres in.','auth/invalid-credential':'E-mailadres of wachtwoord is fout.','auth/wrong-password':'E-mailadres of wachtwoord is fout.','auth/user-not-found':'E-mailadres of wachtwoord is fout.','auth/missing-password':'Vul je wachtwoord in.','auth/email-already-in-use':'Er bestaat al een account met dit e-mailadres. Meld je aan.','auth/weak-password':'Kies een wachtwoord van minstens 6 tekens.','auth/too-many-requests':'Te veel pogingen. Probeer het over een paar minuten opnieuw.','auth/network-request-failed':'Geen internetverbinding.','auth/operation-not-allowed':'Aanmelden met e-mail staat nog niet aan in Firebase (zie README, stap 3).'};
+async function doAuth(){
+  const m=S.authMode,err=document.getElementById('a-err'),btn=document.querySelector('#authform .btn');
+  const mail=document.getElementById('a-mail').value.trim(),pw=(document.getElementById('a-pw')||{}).value,pw2=(document.getElementById('a-pw2')||{}).value;
+  err.className='aerr';err.textContent='';
+  if(m==='register'&&pw!==pw2){err.textContent='De wachtwoorden zijn niet hetzelfde.';return}
+  btn.disabled=true;
+  try{
+    if(m==='login')await A.signInWithEmailAndPassword(auth,mail,pw);
+    else if(m==='register')await A.createUserWithEmailAndPassword(auth,mail,pw);
+    else{await A.sendPasswordResetEmail(auth,mail);err.className='aerr ok';err.textContent='Gelukt! Kijk in je mailbox (ook bij spam).'}
+  }catch(e){err.textContent=AERR[e.code]||('Er ging iets mis ('+(e.code||e.message)+').')}
+  btn.disabled=false;
+}
+async function init(){
+  if(!firebaseConfig||!firebaseConfig.apiKey||/VUL/.test(firebaseConfig.apiKey)){showSetup();return}
+  try{
+    const [App,Auth,F]=await Promise.all([import(FB+'firebase-app.js'),import(FB+'firebase-auth.js'),import(FB+'firebase-firestore.js')]);
+    const app=App.initializeApp(firebaseConfig);
+    A=Auth;auth=Auth.getAuth(app);
+    let db;try{db=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){db=F.getFirestore(app)}
+    Auth.onAuthStateChanged(auth,u=>{
+      if(unsub){unsub();unsub=null}
+      remote=null;USER=u;S.tasks={};
+      if(!u){S.focusOpen=false;closeEdit();renderFocus();showAuth();return}
+      S.authMode='login';S.mode='loading';showApp();render();
+      const col=F.collection(db,'users',u.uid,'items');
+      remote={set:(id,o)=>F.setDoc(F.doc(col,id),o),del:id=>F.deleteDoc(F.doc(col,id))};
+      unsub=F.onSnapshot(col,{includeMetadataChanges:true},snap=>{
+        const t={};snap.forEach(d=>{t[d.id]={...d.data(),id:d.id}});
+        S.tasks=t;S.mode=snap.metadata.fromCache?'offline':'ok';render();
+        if(S.editId)renderSheet();
+      },syncErr);
+    });
+  }catch(e){console.error(e);showScreen(`<div class="card setup"><h2 style="margin-top:0">Geen verbinding</h2><p>De app kon niet starten. Controleer je internet en herlaad de pagina.</p></div>`)}
+}
+
+// ---------- account sheet ----------
+function openAcct(){S.acct=true;S.editId=null;S.les=null;document.getElementById('sheetwrap').hidden=false;
+  document.getElementById('sheet').innerHTML=`<div class="sheettag">Account</div><p style="font-weight:700;font-size:18px;margin:4px 0 2px;overflow-wrap:anywhere">${esc(USER&&USER.email)}</p><p class="hint" style="margin:0 0 6px">Je planning wordt bewaard bij dit account en is zichtbaar op al je toestellen waar je met dit account bent aangemeld.</p><div class="aerr" id="acct-msg"></div>
+  <div class="sheetfoot"><button class="danger" style="color:var(--muted)" data-act="pwreset">Wachtwoord wijzigen</button><button class="btn" data-act="logout">Afmelden</button></div>`}
+
+// ---------- pieces ----------
+function dlChip(dl){
+  const d=diff(today(),dl);
+  if(d<0)return `<span class="chip red">${-d} dag${-d>1?'en':''} te laat</span>`;
+  if(d===0)return `<span class="chip red">deadline vandaag</span>`;
+  if(d===1)return `<span class="chip orange">deadline morgen</span>`;
+  if(d<=3)return `<span class="chip orange">deadline over ${d} dagen</span>`;
+  return `<span class="chip">deadline ${shortDate(dl)}</span>`;
+}
+function row(t,o={}){
+  const m=[];
+  if(o.showDate&&t.date)m.push(`<span class="chip">${shortDate(t.date)}</span>`);
+  if(t.est)m.push(`<span class="chip">${fmtMin(t.est)}</span>`);
+  if(t.deadline&&!t.done&&!o.noDl)m.push(dlChip(t.deadline));
+  if(t.steps&&t.steps.length)m.push(`<span class="chip">${t.steps.filter(s=>s.done).length}/${t.steps.length} stapjes</span>`);
+  return `<div class="task ${t.done?'done':''} ${t.important?'imp':''}">
+    <button class="check" data-act="toggle" data-id="${t.id}" aria-label="Afvinken">${t.done?'✓':''}</button>
+    <div class="tbody" data-act="edit" data-id="${t.id}"><div class="ttl">${esc(t.title)}</div>${m.length?`<div class="meta">${m.join('')}</div>`:''}${o.extra?`<div class="acts">${o.extra(t)}</div>`:''}</div>
+    <button class="star" data-act="star" data-id="${t.id}" aria-label="Belangrijk">${t.important?'★':'☆'}</button>
+  </div>`;
+}
+const listCard=(arr,o)=>`<div class="list">${arr.map(t=>row(t,o)).join('')}</div>`;
+function addBox(id,ph,attrs){return `<div class="card add"><input id="${id}" ${attrs} placeholder="${ph}" enterkeyhint="done" autocomplete="off"><button class="plus" data-act="addbtn" data-for="${id}" aria-label="Toevoegen">+</button></div>`}
+
+// ---------- views ----------
+function vVandaag(){
+  const td=today(),A=all();
+  const tasks=A.filter(t=>t.date===td);
+  const open=tasks.filter(t=>!t.done).sort(sortT),done=tasks.filter(t=>t.done).sort((a,b)=>(b.doneAt||0)-(a.doneAt||0));
+  const imp=open.filter(t=>t.important),rest=open.filter(t=>!t.important);
+  const overdue=A.filter(t=>!t.done&&t.date&&t.date<td).sort((a,b)=>a.date<b.date?-1:1);
+  const soon=A.filter(t=>!t.done&&t.deadline&&diff(td,t.deadline)<=3&&t.date!==td).sort((a,b)=>a.deadline<b.deadline?-1:1);
+  const mins=open.reduce((s,t)=>s+(+t.est||0),0);
+  const pct=tasks.length?Math.round(done.length/tasks.length*100):0;
+  const doy=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5);
+  const C=2*Math.PI*38;const ring=`<div class="hring"><svg width="100%" height="100%" viewBox="0 0 92 92"><circle cx="46" cy="46" r="38" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="9"/><circle cx="46" cy="46" r="38" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}" style="transition:stroke-dashoffset .5s"/></svg><b><span>${done.length}/${tasks.length}<small>klaar</small></span></b></div>`;let h=`<section class="hero"><div><div class="hdate">${fmt(td,{weekday:'long'})}</div><h2>${fmt(td,{day:'numeric',month:'long'})}</h2><p>${MOTTO[doy%MOTTO.length]}</p></div>${ring}</section>`;
+  const lt=lesOn(td);if(lt.length){const nh=nowHM();h+=`<h3>Lessen vandaag <span class="cnt">${lt.length}</span></h3><div class="lesrow">${lt.map(l=>lesHtml(l,l.end&&l.end<nh)).join('')}</div><div style="height:10px"></div>`}
+  h+=addBox('add-today','Wat moet er vandaag gebeuren?','data-add-date="'+td+'"');
+  h+=`<p class="hint">Tip: zet <b>!</b> achteraan voor belangrijk. Tik op een taak voor deadline, tijd of stapjes.</p>`;
+  if(open.length)h+=`<button class="focusbtn" data-act="focus">Focusmodus — één taak tegelijk</button>`;
+  if(mins>360)h+=`<div class="box warn">Je plant ${fmtMin(mins)} werk vandaag. Dat is veel — schuif je iets door naar later?</div>`;
+  else if(mins>0)h+=`<p class="hint">Geschatte tijd voor wat nog openstaat: <b>${fmtMin(mins)}</b></p>`;
+  if(overdue.length)h+=`<h3>Van eerder <span class="cnt">${overdue.length}</span><button class="mini" data-act="alltoday">Alles naar vandaag</button></h3>`+listCard(overdue,{showDate:true,extra:t=>`<button class="mini" data-act="totoday" data-id="${t.id}">Vandaag</button><button class="mini grey" data-act="toinbox" data-id="${t.id}">Later</button>`});
+  if(soon.length)h+=`<h3>Deadline in aantocht</h3>`+listCard(soon,{showDate:true,extra:t=>`<button class="mini" data-act="totoday" data-id="${t.id}">Vandaag</button>`});
+  h+=`<h3>Top 3 van vandaag</h3>`;
+  if(imp.length){h+=listCard(imp);if(imp.length>3)h+=`<div class="box warn">Je hebt ${imp.length} toppers. Kies er max 3 — dan weet je brein waar te beginnen.</div>`}
+  else h+=`<div class="card empty">Tik op ☆ bij de taken die écht moeten. Max 3!</div>`;
+  h+=`<h3>Ook vandaag</h3>`;
+  h+=rest.length?listCard(rest):`<div class="card empty">${open.length?'Niets extra. Lekker overzichtelijk.':tasks.length?'Voilà, alles is klaar. Geniet ervan.':'Nog niets gepland. Begin met één klein ding.'}</div>`;
+  if(done.length){h+=`<button class="toggle" data-act="showdone">${S.showDone?'▾':'▸'} Klaar vandaag (${done.length})</button>`;if(S.showDone)h+=listCard(done)}
+  return h;
+}
+function vWeek(){
+  const td=today(),start=addDays(monday(td),S.week*7),end=addDays(start,6),A=all();
+  const sm=parse(start).getMonth()===parse(end).getMonth();
+  const label=sm?`${parse(start).getDate()} – ${fmt(end,{day:'numeric',month:'long'})}`:`${fmt(start,{day:'numeric',month:'short'})} – ${fmt(end,{day:'numeric',month:'short'})}`;
+  let h=`<h2 class="big">Weekplanning</h2><div class="weeknav"><button class="arrow" data-act="wprev" aria-label="Vorige week">‹</button><b>${label}</b><button class="arrow" data-act="wnext" aria-label="Volgende week">›</button>${S.week?'<button class="mini" data-act="wnow">Deze week</button>':''}</div><div class="row" style="margin:-4px 0 14px"><button class="copybtn" data-act="copyweek" data-v="${start}">Kopieer lessen van vorige week</button><span class="hint" style="margin:0">Daarna pas je aan wat deze week anders is.</span></div><div class="grid">`;
+  for(let i=0;i<7;i++){
+    const d=addDays(start,i);
+    const ts=A.filter(t=>t.date===d).sort((a,b)=>(a.done-b.done)||sortT(a,b));
+    const dls=A.filter(t=>t.deadline===d&&!t.done&&t.date!==d);
+    const mins=ts.filter(t=>!t.done).reduce((s,t)=>s+(+t.est||0),0);
+    h+=`<div class="card day ${d===td?'today':''} ${d<td?'past':''}"><div class="dayhead"><b>${fmt(d,{weekday:'long'})}</b><small>${parse(d).getDate()}/${parse(d).getMonth()+1}${mins?' · '+fmtMin(mins):''}</small></div>`;
+    h+=lesOn(d).map(l=>lesHtml(l,false)).join('');
+    h+=ts.map(t=>row(t,{noDl:false})).join('');
+    h+=dls.map(t=>`<div class="task"><div class="tbody" data-act="edit" data-id="${t.id}"><span class="chip red">Deadline: ${esc(t.title)}</span></div></div>`).join('');
+    h+=`<div class="dayadd"><input id="add-${d}" data-add-date="${d}" placeholder="+ taak" enterkeyhint="done" autocomplete="off"><button class="lesadd" data-act="newles" data-v="${d}">+ les</button></div></div>`;
+  }
+  h+=`</div>`;
+  const inbox=A.filter(t=>!t.date&&!t.done).sort(sortT);
+  h+=`<h3>Nog in te plannen <span class="cnt">${inbox.length}</span></h3>`;
+  h+=inbox.length?listCard(inbox,{extra:t=>`<button class="mini" data-act="plan" data-id="${t.id}">Plan in</button>`}):`<div class="card empty">Alles heeft een plekje gekregen.</div>`;
+  return h;
+}
+function vDeadlines(){
+  const td=today(),A=all().filter(t=>t.deadline&&!t.done).sort((a,b)=>a.deadline<b.deadline?-1:1);
+  const late=A.filter(t=>t.deadline<td),wk=A.filter(t=>t.deadline>=td&&diff(td,t.deadline)<=7),later=A.filter(t=>diff(td,t.deadline)>7);
+  let h=`<h2 class="big">Deadlines</h2><p class="sub">Wat moet wanneer af zijn?</p>`;
+  h+=`<div class="card" style="padding:12px 14px"><input id="dl-title" data-add-dl placeholder="Bv. verslag materiaalonderzoek indienen" style="width:100%;border:0;outline:none;background:none;font-size:18px;padding:6px 0 12px" autocomplete="off"><div class="row"><span style="color:var(--muted);font-weight:700">Deadline:</span><input type="date" id="dl-date" value="${addDays(td,7)}"><button class="btn" data-act="dladd" style="margin-left:auto">Toevoegen</button></div></div>`;
+  const sec=(t,arr)=>arr.length?`<h3>${t} <span class="cnt">${arr.length}</span></h3>`+listCard(arr,{showDate:true}):'';
+  h+=sec('Te laat',late)+sec('Deze week',wk)+sec('Later',later);
+  if(!A.length)h+=`<div class="card empty" style="margin-top:14px">Geen openstaande deadlines.</div>`;
+  h+=`<p class="hint" style="margin-top:14px">Tip: plan een deadline-taak ook op een dag in (tik erop → "Wanneer doe je het?"). Zo begin je op tijd in plaats van op het laatste moment.</p>`;
+  return h;
+}
+function vInbox(){
+  const A=all().filter(t=>!t.date&&!t.done).sort(sortT);
+  let h=`<h2 class="big">Hoofd leegmaken</h2><p class="sub">Schrijf alles wat in je hoofd zit. Eén ding per regel. Inplannen doe je later.</p>`;
+  h+=`<div class="card"><textarea id="dump" placeholder="mama bellen&#10;boek terugbrengen bib&#10;oefeningen topografie maken"></textarea><div style="padding:0 12px 12px;text-align:right"><button class="btn" data-act="dump">Zet in mijn lijst</button></div></div>`;
+  h+=`<h3>Nog geen dag <span class="cnt">${A.length}</span></h3>`;
+  h+=A.length?listCard(A,{extra:t=>`<button class="mini" data-act="totoday" data-id="${t.id}">Vandaag</button><button class="mini grey" data-act="tomorrow" data-id="${t.id}">Morgen</button>`}):`<div class="card empty">Leeg. Je hoofd is opgeruimd.</div>`;
+  return h;
+}
+const VIEWFN={vandaag:vVandaag,week:vWeek,deadlines:vDeadlines,inbox:vInbox};
+
+function render(){
+  const a=document.activeElement;let keep=null;
+  if(a&&a.id&&document.getElementById('app').contains(a)&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'))keep={id:a.id,v:a.value,s:a.selectionStart};
+  const td=today(),A=all();
+  const late=A.filter(t=>!t.done&&t.date&&t.date<td).length;
+  const dlSoon=A.filter(t=>!t.done&&t.deadline&&diff(td,t.deadline)<=1).length;
+  const sync={loading:['','Laden…'],ok:['ok','Gesynchroniseerd'],offline:['warn','Offline — synct later'],error:['warn','Sync-fout — herlaad']}[S.mode]||['',''];
+  const tab=(v,ic,lb,b)=>`<button class="${S.view===v?'on':''}" data-act="view" data-v="${v}">${ic}<div>${lb}${b?`<span class="badge">${b}</span>`:''}</div></button>`;
+  document.getElementById('app').innerHTML=
+    `<header class="${S.view==='week'?'wide':''}"><h1><i>✓</i>Voilà</h1><div class="hright"><div class="sync"><i class="dot ${sync[0]}"></i><span class="stxt">${sync[1]}</span></div><button class="acct" data-act="account" aria-label="Account">${esc(((USER&&USER.email)||"?")[0])}</button></div></header>
+     <main class="${S.view==='week'?'wide':''}">${VIEWFN[S.view]()}</main>
+     <nav><div class="in">${tab('vandaag',ICON.sun,'Vandaag',late)}${tab('week',ICON.cal,'Week')}${tab('deadlines',ICON.clock,'Deadlines',dlSoon)}${tab('inbox',ICON.tray,'Hoofd leeg')}</div></nav>`;
+  if(keep){const e=document.getElementById(keep.id);if(e){e.value=keep.v;e.focus({preventScroll:true});try{e.setSelectionRange(keep.s,keep.s)}catch(_){}}}
+  if(S.focusOpen)renderFocus();
+}
+
+// ---------- edit sheet ----------
+function openEdit(id){S.editId=id;S.delArm=false;document.getElementById('sheetwrap').hidden=false;renderSheet()}
+function closeEdit(){const ti=document.getElementById('e-title');if(ti&&S.editId)saveTitle(ti.value);S.editId=null;S.les=null;S.acct=false;document.getElementById('sheetwrap').hidden=true}
+function openLes(l,isNew){S.les=l;S.lesNew=isNew;S.editId=null;S.delArm=false;document.getElementById('sheetwrap').hidden=false;renderLesSheet();if(isNew)setTimeout(()=>{const e=document.getElementById('l-title');e&&e.focus()},60)}
+function readLes(){const g=id=>document.getElementById(id).value;return {...S.les,title:g('l-title').trim(),date:g('l-date'),start:g('l-start'),end:g('l-end'),place:g('l-place').trim()}}
+function lesDup(l,d){return lessons().some(x=>x.date===d&&x.start===l.start&&x.title===l.title)}
+function renderLesSheet(){
+  const l=S.les,el=document.getElementById('sheet');
+  el.innerHTML=`<div class="sheettag">Les</div><input class="tin" id="l-title" placeholder="Vak, bv. Topografie II" value="${esc(l.title)}" autocomplete="off">
+   <label>Dag</label><div class="chips"><input type="date" id="l-date" value="${l.date}"></div>
+   <label>Uur</label><div class="chips"><input type="time" id="l-start" value="${l.start||''}"><span style="color:var(--muted)">tot</span><input type="time" id="l-end" value="${l.end||''}"></div>
+   <label>Lokaal (optioneel)</label><input class="stepadd" id="l-place" value="${esc(l.place||'')}" placeholder="bv. Schoonmeersen B2.035" autocomplete="off">
+   ${S.lesNew?'':`<label>Kopiëren naar</label><div class="chips"><button class="pick" data-act="lescopy" data-v="1">Morgen</button><button class="pick" data-act="lescopy" data-v="7">Volgende week</button></div>`}
+   <div class="sheetfoot">${S.lesNew?'<button class="danger" style="color:var(--muted)" data-act="sheetclose">Annuleren</button>':`<button class="danger" data-act="lesdel">${S.delArm?'Zeker? Tik nog eens':'Verwijderen'}</button>`}<button class="btn" data-act="lessave">Opslaan</button></div>`;
+}
+function saveTitle(v){const t=S.tasks[S.editId];v=v.trim();if(t&&v&&v!==t.title)upd(t.id,{title:v})}
+function renderSheet(){
+  const t=S.tasks[S.editId];const el=document.getElementById('sheet');
+  if(!t){closeEdit();return}
+  const a=document.activeElement;let keep=null;if(a&&a.id&&el.contains(a))keep={id:a.id,v:a.value};
+  const td=today(),tm=addDays(td,1),nm=addDays(monday(td),7);
+  const dp=(v,l)=>`<button class="pick ${t.date===v?'on':''}" data-act="setdate" data-v="${v??''}">${l}</button>`;
+  const es=[5,15,30,60,120];
+  el.innerHTML=`<input class="tin" id="e-title" value="${esc(t.title)}">
+   <label>Wanneer doe je het?</label><div class="chips">${dp(td,'Vandaag')}${dp(tm,'Morgen')}${dp(nm,'Volgende week')}${dp(null,'Nog geen dag')}<input type="date" id="e-date" value="${t.date||''}"></div>
+   <label>Deadline (moet af op)</label><div class="chips"><input type="date" id="e-dl" value="${t.deadline||''}">${t.deadline?`<button class="pick" data-act="cleardl">Geen deadline</button> ${dlChip(t.deadline)}`:''}</div>
+   <label>Belangrijk?</label><div class="chips"><button class="pick ${t.important?'impon':''}" data-act="eimp">${t.important?'★ Ja, top-taak':'☆ Nee'}</button></div>
+   <label>Hoe lang duurt het ongeveer?</label><div class="chips">${es.map(m=>`<button class="pick ${+t.est===m?'on':''}" data-act="est" data-v="${m}">${fmtMin(m)}</button>`).join('')}</div>
+   <label>Stapjes — grote taak? Hak hem in mini-stukjes</label>
+   <div>${(t.steps||[]).map((s,i)=>`<div class="step ${s.done?'done':''}"><button class="check" data-act="step" data-id="${t.id}" data-i="${i}">${s.done?'✓':''}</button><span>${esc(s.t)}</span><button class="x" data-act="stepdel" data-i="${i}" aria-label="Verwijder stapje">×</button></div>`).join('')}
+   <input class="stepadd" id="e-step" placeholder="+ stapje toevoegen (Enter)" enterkeyhint="done" autocomplete="off"></div>
+   <div class="sheetfoot"><button class="danger" data-act="del">${S.delArm?'Zeker? Tik nog eens':'Verwijderen'}</button><button class="btn" data-act="sheetclose">Klaar</button></div>`;
+  if(keep){const e=document.getElementById(keep.id);if(e){e.value=keep.v;e.focus({preventScroll:true})}}
+}
+
+// ---------- focus ----------
+function pickFocus(){
+  const td=today();let t=S.tasks[S.focusId];
+  if(!t||t.done||t.date!==td){t=all().filter(x=>x.date===td&&!x.done).sort(sortT)[0];S.focusId=t?t.id:null}
+  return t;
+}
+function renderFocus(){
+  const el=document.getElementById('focus');
+  if(!S.focusOpen){el.hidden=true;return}
+  el.hidden=false;const t=pickFocus();
+  const left=all().filter(x=>x.date===today()&&!x.done).length;
+  if(!t){el.innerHTML=`<button class="fclose" data-act="fclose">Sluiten ✕</button><div class="ftitle">Voilà, alles van vandaag is klaar!</div><p class="sub">Neem een pauze. Je hebt het verdiend.</p><div class="factions"><button class="btn" data-act="fclose">Terug</button></div>`;return}
+  const st=t.steps||[];
+  let tm='';
+  if(S.timer){tm=`<div class="ring"><svg width="150" height="150"><circle cx="75" cy="75" r="64" fill="none" stroke="var(--line)" stroke-width="12"/><circle id="ringc" cx="75" cy="75" r="64" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="402.1" stroke-dashoffset="0"/></svg><b id="tmr">--:--</b></div><div class="fsmall"><button class="mini grey" data-act="tstop">Timer stoppen</button></div>`}
+  else tm=`<p class="hint" style="margin-bottom:8px">Start een timer — gewoon beginnen, hoe kort ook:</p><div class="fsmall">${[5,15,25].map(m=>`<button class="mini" data-act="timer" data-v="${m}">${m} min</button>`).join('')}</div>`;
+  el.innerHTML=`<button class="fclose" data-act="fclose">Sluiten ✕</button>
+   <div class="flabel">Nu bezig · nog ${left} vandaag</div>
+   <div class="ftitle">${t.important?'★ ':''}${esc(t.title)}</div>
+   ${st.length?`<div class="fsteps card" style="padding:6px 14px">${st.map((s,i)=>`<div class="step ${s.done?'done':''}"><button class="check" data-act="step" data-id="${t.id}" data-i="${i}">${s.done?'✓':''}</button><span>${esc(s.t)}</span></div>`).join('')}</div>`:''}
+   ${tm}
+   <div class="factions"><button class="btn" data-act="fdone">✓ Klaar!</button>
+   <div class="fsmall"><button class="mini grey" data-act="fskip">Straks (volgende taak)</button><button class="mini grey" data-act="fsplit">Te groot? Hak op in stapjes</button></div></div>`;
+  tick();
+}
+let actx=null;
+function beep(){try{if(!actx)return;[0,0.35,0.7].forEach(d=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.setValueAtTime(.18,actx.currentTime+d);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d+.3);o.connect(g).connect(actx.destination);o.start(actx.currentTime+d);o.stop(actx.currentTime+d+.3)})}catch(e){}}
+function startTimer(m){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(e){}S.timer={end:Date.now()+m*6e4,total:m*6e4};clearInterval(S.tInt);S.tInt=setInterval(tick,1000);renderFocus()}
+function stopTimer(){S.timer=null;clearInterval(S.tInt)}
+function tick(){
+  if(!S.timer)return;const left=S.timer.end-Date.now();
+  if(left<=0){stopTimer();beep();toast('Tijd is om. Goed gewerkt — even pauze?');renderFocus();return}
+  const e=document.getElementById('tmr'),c=document.getElementById('ringc');
+  if(e){const s=Math.ceil(left/1000);e.textContent=Math.floor(s/60)+':'+pad(s%60)}
+  if(c)c.setAttribute('stroke-dashoffset',String(402.1*(1-left/S.timer.total)));
+}
+
+// ---------- feedback ----------
+let tTo;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tTo);tTo=setTimeout(()=>t.classList.remove('show'),2200)}
+function celebrate(x,y){
+  toast(CHEERS[Math.floor(Math.random()*CHEERS.length)]);
+  const em=['var(--accent)','var(--accent2)','var(--violet)','var(--imp)'];
+  for(let i=0;i<10;i++){const s=document.createElement('span');s.className='conf';s.style.background=em[i%em.length];s.style.left=x+'px';s.style.top=y+'px';
+    const a=Math.random()*Math.PI*2,r=60+Math.random()*90;s.style.setProperty('--dx',Math.cos(a)*r+'px');s.style.setProperty('--dy',Math.sin(a)*r-40+'px');s.style.setProperty('--r',(Math.random()*360)+'deg');
+    document.body.appendChild(s);setTimeout(()=>s.remove(),1200)}
+}
+function toggle(id,ev){const t=S.tasks[id];if(!t)return;const nd=!t.done;upd(id,{done:nd,doneAt:nd?Date.now():null});if(nd){const r=ev&&ev.target.getBoundingClientRect?ev.target.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};celebrate(r.left+r.width/2,r.top+r.height/2)}}
+function quickAdd(input){
+  let v=input.value.trim();if(!v)return;let imp=false;
+  if(/!\s*$/.test(v)){imp=true;v=v.replace(/!+\s*$/,'').trim()}
+  const d=input.dataset.addDate;input.value='';
+  addTask(v,{date:d||null,important:imp});
+}
+
+// ---------- events ----------
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');
+  if(!b){if(e.target.id==='sheetwrap')closeEdit();return}
+  const id=b.dataset.id,v=b.dataset.v,td=today();
+  switch(b.dataset.act){
+    case 'view':location.hash=v;break;
+    case 'amode':S.authMode=v;showAuth();break;
+    case 'account':openAcct();break;
+    case 'logout':closeEdit();A.signOut(auth);break;
+    case 'pwreset':A.sendPasswordResetEmail(auth,USER.email).then(()=>{const m=document.getElementById('acct-msg');m.className='aerr ok';m.textContent='Link verstuurd naar je mailbox.'}).catch(e=>{document.getElementById('acct-msg').textContent=AERR[e.code]||'Lukt niet, probeer later opnieuw.'});break;
+    case 'toggle':toggle(id,e);break;
+    case 'star':upd(id,{important:!S.tasks[id].important});break;
+    case 'edit':case 'plan':openEdit(id);break;
+    case 'addbtn':{const i=document.getElementById(b.dataset.for);quickAdd(i);i.focus();break}
+    case 'totoday':upd(id,{date:td});toast('Naar vandaag gezet');break;
+    case 'tomorrow':upd(id,{date:addDays(td,1)});toast('Staat op morgen');break;
+    case 'toinbox':upd(id,{date:null});toast('Bij "nog in te plannen" gezet');break;
+    case 'alltoday':all().filter(t=>!t.done&&t.date&&t.date<td).forEach(t=>upd(t.id,{date:td}));break;
+    case 'showdone':S.showDone=!S.showDone;render();break;
+    case 'wprev':S.week--;render();break;case 'wnext':S.week++;render();break;case 'wnow':S.week=0;render();break;
+    case 'dladd':{const ti=document.getElementById('dl-title'),dd=document.getElementById('dl-date').value;if(!ti.value.trim()){ti.focus();return}addTask(ti.value,{deadline:dd||null});ti.value='';toast('Deadline toegevoegd');break}
+    case 'dump':{const ta=document.getElementById('dump');const lines=ta.value.split('\n').map(s=>s.replace(/^[-*•\s]+/,'').trim()).filter(Boolean);lines.forEach((l,i)=>addTask(l,{order:Date.now()+i,created:Date.now()+i}));ta.value='';if(lines.length)toast(`${lines.length} ding${lines.length>1?'en':''} uit je hoofd`);break}
+    case 'focus':S.focusOpen=true;S.focusId=null;renderFocus();break;
+    case 'fclose':S.focusOpen=false;stopTimer();renderFocus();break;
+    case 'fdone':{const t=pickFocus();if(t){toggle(t.id,e);stopTimer();S.focusId=null;renderFocus()}break}
+    case 'fskip':{const t=pickFocus();if(t){S.focusId=null;upd(t.id,{order:Date.now()});const nx=all().filter(x=>x.date===td&&!x.done&&x.id!==t.id).sort(sortT)[0];S.focusId=nx?nx.id:t.id;stopTimer();renderFocus()}break}
+    case 'fsplit':{const t=pickFocus();if(t){openEdit(t.id);setTimeout(()=>{const s=document.getElementById('e-step');s&&s.focus()},50)}break}
+    case 'timer':startTimer(+v);break;
+    case 'tstop':stopTimer();renderFocus();break;
+    case 'step':{const t=S.tasks[id];const st=(t.steps||[]).map((s,i)=>i===+b.dataset.i?{...s,done:!s.done}:s);upd(id,{steps:st});if(st[+b.dataset.i].done)toast('Stapje gezet');if(S.editId)renderSheet();break}
+    case 'newles':openLes({title:'',date:v,start:'08:30',end:'10:00',place:''},true);break;
+    case 'editles':openLes({...S.tasks[id]},false);break;
+    case 'lessave':{const l=readLes();if(!l.title){document.getElementById('l-title').focus();return}if(!l.date)return;put({...l,kind:'les',id:l.id||newId()});S.les=null;document.getElementById('sheetwrap').hidden=true;toast('Les opgeslagen');break}
+    case 'lescopy':{const l=readLes();if(!l.title)return;put({...l,kind:'les'});S.les={...l,kind:'les'};const nd=addDays(l.date,+v);if(lesDup(l,nd))toast('Die les staat er al');else{put({...l,kind:'les',id:newId(),date:nd});toast('Gekopieerd naar '+shortDate(nd))}break}
+    case 'lesdel':if(!S.delArm){S.delArm=true;renderLesSheet()}else{const i=S.les.id;S.les=null;document.getElementById('sheetwrap').hidden=true;del(i);toast('Les verwijderd')}break;
+    case 'copyweek':{const st=v,prev=addDays(st,-7);let n=0;lessons().filter(l=>l.date>=prev&&l.date<st).forEach(l=>{const nd=addDays(l.date,7);if(!lesDup(l,nd)){const {id,...o}=l;put({...o,id:newId(),date:nd});n++}});toast(n?`${n} les${n>1?'sen':''} gekopieerd`:'Niets te kopiëren — vorige week had geen (nieuwe) lessen');break}
+    // sheet
+    case 'setdate':upd(S.editId,{date:v||null});renderSheet();break;
+    case 'cleardl':upd(S.editId,{deadline:null});renderSheet();break;
+    case 'eimp':upd(S.editId,{important:!S.tasks[S.editId].important});renderSheet();break;
+    case 'est':{const t=S.tasks[S.editId];upd(S.editId,{est:+t.est===+v?null:+v});renderSheet();break}
+    case 'stepdel':{const t=S.tasks[S.editId];upd(t.id,{steps:(t.steps||[]).filter((_,i)=>i!==+b.dataset.i)});renderSheet();break}
+    case 'del':if(!S.delArm){S.delArm=true;renderSheet()}else{const i=S.editId;S.editId=null;document.getElementById('sheetwrap').hidden=true;del(i);toast('Verwijderd')}break;
+    case 'sheetclose':closeEdit();break;
+  }
+});
+document.addEventListener('keydown',e=>{
+  const t=e.target;
+  if(e.key==='Escape'){if(S.editId)closeEdit();else if(S.focusOpen){S.focusOpen=false;stopTimer();renderFocus()}return}
+  if(e.key!=='Enter'||e.isComposing)return;
+  if(t.dataset&&t.dataset.addDate!==undefined){e.preventDefault();quickAdd(t)}
+  else if(t.id==='dl-title'){e.preventDefault();document.querySelector('[data-act="dladd"]').click()}
+  else if(t.id==='e-step'){e.preventDefault();const v=t.value.trim();if(!v)return;const k=S.tasks[S.editId];t.value='';upd(k.id,{steps:[...(k.steps||[]),{t:v,done:false}]});renderSheet();document.getElementById('e-step').focus()}
+  else if(t.id==='e-title'){e.preventDefault();saveTitle(t.value);t.blur()}
+  else if(t.id&&t.id.startsWith('l-')){e.preventDefault();document.querySelector('[data-act="lessave"]').click()}
+});
+document.addEventListener('submit',e=>{if(e.target.id==='authform'){e.preventDefault();doAuth()}});
+document.addEventListener('change',e=>{
+  const t=e.target;if(!S.editId)return;
+  if(t.id==='e-title')saveTitle(t.value);
+  if(t.id==='e-date'){upd(S.editId,{date:t.value||null});renderSheet()}
+  if(t.id==='e-dl'){upd(S.editId,{deadline:t.value||null});renderSheet()}
+});
+function fromHash(){const h=location.hash.slice(1);S.view=VIEWS.includes(h)?h:'vandaag';render();scrollTo(0,0)}
+window.addEventListener('hashchange',fromHash);
+// re-render at midnight / when coming back to the app
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+fromHash();init();
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>

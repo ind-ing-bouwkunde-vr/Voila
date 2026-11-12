@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Iedereen kan alleen zijn eigen planning lezen en aanpassen.
+    match /users/{uid}/items/{itemId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
