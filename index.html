@@ -284,7 +284,7 @@ function authHTML(){
   </form>
   <div class="alinks">${m==='login'?`<button data-act="amode" data-v="register">Nog geen account? <b>Maak er een</b></button><button data-act="amode" data-v="reset">Wachtwoord vergeten?</button>`:`<button data-act="amode" data-v="login">← Terug naar aanmelden</button>`}</div></div>`;
 }
-function showAuth(){showScreen(authHTML());setTimeout(()=>{const e=document.getElementById('a-mail');if(!e)return;try{e.value=localStorage.getItem('voila-mail')||''}catch(_){}const p=document.getElementById('a-pw');(e.value&&p?p:e).focus()},50)}
+function showAuth(){showScreen(authHTML());setTimeout(()=>{const e=document.getElementById('a-mail');if(!e)return;try{if(!e.value)e.value=localStorage.getItem('voila-mail')||''}catch(_){}const p=document.getElementById('a-pw');(e.value&&p?p:e).focus()},50)}
 const AERR={'auth/invalid-email':'Dat e-mailadres klopt niet.','auth/missing-email':'Vul je e-mailadres in.','auth/invalid-credential':'E-mailadres of wachtwoord is fout.','auth/wrong-password':'E-mailadres of wachtwoord is fout.','auth/user-not-found':'E-mailadres of wachtwoord is fout.','auth/missing-password':'Vul je wachtwoord in.','auth/email-already-in-use':'Er bestaat al een account met dit e-mailadres. Meld je aan.','auth/weak-password':'Kies een wachtwoord van minstens 6 tekens.','auth/too-many-requests':'Te veel pogingen. Probeer het over een paar minuten opnieuw.','auth/network-request-failed':'Geen internetverbinding.','auth/operation-not-allowed':'Aanmelden met e-mail staat nog niet aan in Firebase (zie README, stap 3).'};
 async function doAuth(){
   const m=S.authMode,err=document.getElementById('a-err'),btn=document.querySelector('#authform .btn');
