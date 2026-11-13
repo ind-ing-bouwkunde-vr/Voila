@@ -1,5 +1,5 @@
 // Zorgt dat de app opstart, ook zonder internet.
-const CACHE = 'voila-v1';
+const CACHE = 'voila-v2';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 

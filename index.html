@@ -284,7 +284,7 @@ function authHTML(){
   </form>
   <div class="alinks">${m==='login'?`<button data-act="amode" data-v="register">Nog geen account? <b>Maak er een</b></button><button data-act="amode" data-v="reset">Wachtwoord vergeten?</button>`:`<button data-act="amode" data-v="login">← Terug naar aanmelden</button>`}</div></div>`;
 }
-function showAuth(){showScreen(authHTML());setTimeout(()=>{const e=document.getElementById('a-mail');e&&e.focus()},50)}
+function showAuth(){showScreen(authHTML());setTimeout(()=>{const e=document.getElementById('a-mail');if(!e)return;try{e.value=localStorage.getItem('voila-mail')||''}catch(_){}const p=document.getElementById('a-pw');(e.value&&p?p:e).focus()},50)}
 const AERR={'auth/invalid-email':'Dat e-mailadres klopt niet.','auth/missing-email':'Vul je e-mailadres in.','auth/invalid-credential':'E-mailadres of wachtwoord is fout.','auth/wrong-password':'E-mailadres of wachtwoord is fout.','auth/user-not-found':'E-mailadres of wachtwoord is fout.','auth/missing-password':'Vul je wachtwoord in.','auth/email-already-in-use':'Er bestaat al een account met dit e-mailadres. Meld je aan.','auth/weak-password':'Kies een wachtwoord van minstens 6 tekens.','auth/too-many-requests':'Te veel pogingen. Probeer het over een paar minuten opnieuw.','auth/network-request-failed':'Geen internetverbinding.','auth/operation-not-allowed':'Aanmelden met e-mail staat nog niet aan in Firebase (zie README, stap 3).'};
 async function doAuth(){
   const m=S.authMode,err=document.getElementById('a-err'),btn=document.querySelector('#authform .btn');
@@ -292,6 +292,7 @@ async function doAuth(){
   err.className='aerr';err.textContent='';
   if(m==='register'&&pw!==pw2){err.textContent='De wachtwoorden zijn niet hetzelfde.';return}
   btn.disabled=true;
+  try{localStorage.setItem('voila-mail',mail)}catch(_){}
   try{
     if(m==='login')await A.signInWithEmailAndPassword(auth,mail,pw);
     else if(m==='register')await A.createUserWithEmailAndPassword(auth,mail,pw);
@@ -304,7 +305,9 @@ async function init(){
   try{
     const [App,Auth,F]=await Promise.all([import(FB+'firebase-app.js'),import(FB+'firebase-auth.js'),import(FB+'firebase-firestore.js')]);
     const app=App.initializeApp(firebaseConfig);
-    A=Auth;auth=Auth.getAuth(app);
+    A=Auth;
+    // Login bewaren op het toestel: eerst IndexedDB, anders localStorage (nodig voor iPhone-beginschermapps)
+    try{auth=Auth.initializeAuth(app,{persistence:[Auth.indexedDBLocalPersistence,Auth.browserLocalPersistence]})}catch(e){auth=Auth.getAuth(app)}
     let db;try{db=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){db=F.getFirestore(app)}
     Auth.onAuthStateChanged(auth,u=>{
       if(unsub){unsub();unsub=null}
