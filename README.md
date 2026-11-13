@@ -46,7 +46,7 @@ door de waarden uit stap 2. Klik **Commit changes**.
 > Die gegevens zijn niet geheim; Firebase is zo ontworpen. Je planning is beschermd door je account en de regels uit stap 4.
 
 Na ongeveer een minuut staat de app online op:
-**https://ind-ing-bouwkunde-vr.github.io/voila/**
+**https://ind-ing-bouwkunde-vr.github.io/Voila/**
 
 ---
 
