@@ -1,9 +1,44 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Iedereen kan alleen zijn eigen planning lezen en aanpassen.
-    match /users/{uid}/items/{itemId} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+    function signedIn() { return request.auth != null; }
+    function myEmail() { return request.auth.token.email.lower(); }
+
+    // Eigen instellingen en eigen planning: alleen jijzelf.
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+      match /items/{itemId} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+    }
+
+    // Gedeelde agenda's
+    match /calendars/{cid} {
+      // Leden en uitgenodigden mogen de agenda zien.
+      allow read: if signedIn() && (request.auth.uid in resource.data.members
+                                    || myEmail() in resource.data.invites);
+      // Aanmaken: alleen met jezelf als maker en enig lid.
+      allow create: if signedIn()
+                    && request.resource.data.owner == request.auth.uid
+                    && request.resource.data.members == [request.auth.uid];
+      // Leden mogen de agenda aanpassen (naam, kleur, uitnodigen, verlaten).
+      // Uitgenodigden mogen alleen zichzelf toevoegen of de uitnodiging weigeren.
+      allow update: if signedIn() && (
+          request.auth.uid in resource.data.members
+          || (myEmail() in resource.data.invites
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members', 'invites', 'memberEmails'])
+              && request.resource.data.members.hasAll(resource.data.members)
+              && request.resource.data.members.removeAll(resource.data.members).hasOnly([request.auth.uid])
+              && !(myEmail() in request.resource.data.invites)));
+      // Verwijderen: alleen de maker.
+      allow delete: if signedIn() && resource.data.owner == request.auth.uid;
+
+      // Activiteiten en taken in een gedeelde agenda: alle leden.
+      match /items/{itemId} {
+        allow read, write: if signedIn()
+          && request.auth.uid in get(/databases/$(database)/documents/calendars/$(cid)).data.members;
+      }
     }
   }
 }
