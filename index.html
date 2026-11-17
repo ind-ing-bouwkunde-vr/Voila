@@ -256,6 +256,24 @@ input[type=time]{border:1px solid var(--line);border-radius:12px;padding:9px 11p
 .calpick.on{background:color-mix(in srgb,var(--cc) 18%,var(--card));color:var(--ink);border-color:var(--cc)}
 .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:none}
 .dayadd{flex-wrap:wrap}.dayadd input{flex:1 1 100%;min-width:0}.dayadd .lesadd{flex:1 1 100%;padding:8px 10px;text-align:left}
+.pipbtn{width:100%;margin:2px 0 4px;padding:11px;border-radius:14px;border:1.5px dashed color-mix(in srgb,var(--violet) 45%,var(--line));color:var(--violet);font-weight:800;font-size:15px}
+.pipbody{margin:0;background:var(--bg);background-image:none;min-height:100vh}
+.pip{padding:14px 14px 16px;display:flex;flex-direction:column;gap:11px}
+.piphead{display:flex;justify-content:space-between;align-items:center}
+.piphead .flabel{font-size:11px;padding:4px 10px}
+.piptitle{font-family:Fraunces,Georgia,serif;font-size:23px;font-weight:600;line-height:1.2;overflow-wrap:anywhere}
+.pipprog{display:flex;align-items:center;gap:10px;font-weight:800;font-size:13px;color:var(--muted)}
+.pipprog .bar{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.pipprog .bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.pipsteps{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 12px;max-height:46vh;overflow:auto}
+.pipsteps .step{padding:6px 0;font-size:15px}
+.pipsteps .step.next span{font-weight:800}
+.pipsteps .step.next .check{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.piptimer{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 12px}
+.piptimer b{font-size:26px;font-family:Fraunces,Georgia,serif;font-variant-numeric:tabular-nums}
+.pipbtns{display:flex;gap:6px}
+.pipfoot{display:flex;gap:8px}.pipfoot .btn{flex:1;padding:12px}
+.box.soft{background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:14px;padding:9px 12px;border-radius:12px}
 </style>
 </head>
 <body>
@@ -509,7 +527,7 @@ function vVandaag(){
   h+=ev.length?`<div class="lesrow">${ev.map(e=>evHtml(e,td,e.end&&e.end<nh)).join('')}</div>`:`<div class="card empty" style="padding:14px">Geen lessen of afspraken vandaag.</div>`;
   h+=`<div style="height:16px"></div>`+addBox('add-today','Wat moet er vandaag gebeuren?','data-add-date="'+td+'"');
   h+=`<p class="hint">Tip: zet <b>!</b> achteraan voor belangrijk. Tik op een taak voor deadline, tijd, agenda of stapjes.</p>`;
-  if(open.length)h+=`<button class="focusbtn" data-act="focus">Focusmodus — één taak tegelijk</button>`;
+  if(open.length)h+=`<button class="focusbtn" data-act="focus">Focusmodus — één taak tegelijk</button>`+(pipOK()?`<button class="pipbtn" data-act="pip">${PIP?'Mini-venster staat open':'Of: mini-venster in de hoek dat bovenaan blijft'}</button>`:'');
   if(mins>360)h+=`<div class="box warn">Je plant ${fmtMin(mins)} werk vandaag. Dat is veel — schuif je iets door naar later?</div>`;
   else if(mins>0)h+=`<p class="hint">Geschatte tijd voor wat nog openstaat: <b>${fmtMin(mins)}</b></p>`;
   if(overdue.length)h+=`<h3>Van eerder <span class="cnt">${overdue.length}</span><button class="mini" data-act="alltoday">Alles naar vandaag</button></h3>`+listCard(overdue,{showDate:true,extra:t=>`<button class="mini" data-act="totoday" data-id="${t.id}">Vandaag</button><button class="mini grey" data-act="toinbox" data-id="${t.id}">Later</button>`});
@@ -609,6 +627,7 @@ function render(){
      <nav><div class="in">${tab('vandaag',ICON.sun,'Vandaag',late)}${tab('week',ICON.cal,'Week')}${tab('deadlines',ICON.clock,'Deadlines',dlSoon)}${tab('inbox',ICON.tray,'Hoofd leeg')}</div></nav>`;
   if(keep){const e=document.getElementById(keep.id);if(e){e.value=keep.v;e.focus({preventScroll:true});try{e.setSelectionRange(keep.s,keep.s)}catch(_){}}}
   if(S.focusOpen)renderFocus();
+  renderPip();
 }
 
 // ---------- bladen (sheets) ----------
@@ -694,6 +713,7 @@ function pickFocus(){
   return t;
 }
 function renderFocus(){
+  renderPip();
   const el=document.getElementById('focus');
   if(!S.focusOpen){el.hidden=true;return}
   el.hidden=false;const t=pickFocus();
@@ -709,7 +729,7 @@ function renderFocus(){
    ${st.length?`<div class="fsteps card" style="padding:6px 14px">${st.map((s,i)=>`<div class="step ${s.done?'done':''}"><button class="check" data-act="step" data-id="${t.id}" data-i="${i}">${s.done?'✓':''}</button><span>${esc(s.t)}</span></div>`).join('')}</div>`:''}
    ${tm}
    <div class="factions"><button class="btn" data-act="fdone">✓ Klaar!</button>
-   <div class="fsmall"><button class="mini grey" data-act="fskip">Straks (volgende taak)</button><button class="mini grey" data-act="fsplit">Te groot? Hak op in stapjes</button></div></div>`;
+   <div class="fsmall"><button class="mini grey" data-act="fskip">Straks (volgende taak)</button><button class="mini grey" data-act="fsplit">Te groot? Hak op in stapjes</button></div>${pipOK()?`<button class="mini" data-act="pip" style="margin-top:4px">${PIP?'Mini-venster staat open':'Mini-venster in de hoek (blijft bovenaan)'}</button>`:''}</div>`;
   tick();
 }
 let actx=null;
@@ -718,10 +738,66 @@ function startTimer(m){try{actx=actx||new (window.AudioContext||window.webkitAud
 function stopTimer(){S.timer=null;clearInterval(S.tInt)}
 function tick(){
   if(!S.timer)return;const left=S.timer.end-Date.now();
-  if(left<=0){stopTimer();beep();toast('Tijd is om. Goed gewerkt — even pauze?');renderFocus();return}
+  if(left<=0){stopTimer();beep();toast('Tijd is om. Goed gewerkt — even pauze?');S.pipMsg='Tijd is om. Goed gewerkt — even pauze?';renderFocus();renderPip();return}
   const e=document.getElementById('tmr'),c=document.getElementById('ringc');
   if(e){const s=Math.ceil(left/1000);e.textContent=Math.floor(s/60)+':'+pad(s%60)}
   if(c)c.setAttribute('stroke-dashoffset',String(402.1*(1-left/S.timer.total)));
+  const pe=PIP&&PIP.document.getElementById('pip-tmr');if(pe){const s=Math.ceil(left/1000);pe.textContent=Math.floor(s/60)+':'+pad(s%60)}
+}
+
+
+// ---------- mini-venster (blijft bovenaan, laptop) ----------
+let PIP=null;
+const pipOK=()=>'documentPictureInPicture' in window;
+async function openPip(){
+  if(!pipOK()){toast('Je browser ondersteunt dit niet. Gebruik Edge of Chrome op je laptop.');return}
+  if(PIP){try{PIP.focus()}catch(_){}return}
+  try{
+    const w=await documentPictureInPicture.requestWindow({width:340,height:460});
+    PIP=w;
+    [...document.styleSheets].forEach(ss=>{try{const st=w.document.createElement('style');st.textContent=[...ss.cssRules].map(r=>r.cssText).join('\n');w.document.head.appendChild(st)}catch(_){if(ss.href){const l=w.document.createElement('link');l.rel='stylesheet';l.href=ss.href;w.document.head.appendChild(l)}}});
+    w.document.title='Voilà — nu bezig';
+    w.document.body.className='pipbody';
+    w.document.addEventListener('click',pipClick);
+    w.addEventListener('pagehide',()=>{PIP=null;render()});
+    renderPip();render();
+  }catch(e){console.error(e);toast('Mini-venster openen lukte niet')}
+}
+function renderPip(){
+  if(!PIP)return;
+  const d=PIP.document;d.documentElement.setAttribute('style',document.documentElement.getAttribute('style')||'');
+  const t=pickFocus(),left=all().filter(x=>x.date===today()&&!x.done).length;
+  let h;
+  if(!t)h=`<div class="pip"><div class="flabel">Voilà</div><div class="piptitle">Alles van vandaag is klaar!</div><p class="hint">Neem een pauze. Je hebt het verdiend.</p><button class="mini grey" data-act="pipclose">Venster sluiten</button></div>`;
+  else{
+    const st=t.steps||[],nd=st.findIndex(s=>!s.done),dn=st.filter(s=>s.done).length;
+    const tm=S.timer?`<div class="piptimer"><b id="pip-tmr">--:--</b><button class="mini grey" data-act="tstop">Stop</button></div>`:`<div class="pipbtns">${[5,15,25].map(m=>`<button class="mini" data-act="timer" data-v="${m}">${m} min</button>`).join('')}</div>`;
+    h=`<div class="pip">
+      <div class="piphead"><span class="flabel">Nu bezig</span><span class="hint" style="margin:0">nog ${left} vandaag</span></div>
+      <div class="piptitle">${t.important?'★ ':''}${esc(t.title)}</div>
+      ${S.pipMsg?`<div class="box soft" style="margin:0">${esc(S.pipMsg)}</div>`:''}
+      ${st.length?`<div class="pipprog"><div class="bar"><i style="width:${Math.round(dn/st.length*100)}%"></i></div><span>${dn}/${st.length}</span></div>
+        <div class="pipsteps">${st.map((s,i)=>`<div class="step ${s.done?'done':''} ${i===nd?'next':''}"><button class="check" data-act="step" data-id="${t.id}" data-i="${i}">${s.done?'✓':''}</button><span>${esc(s.t)}</span></div>`).join('')}</div>`
+      :`<p class="hint" style="margin:0">Geen stapjes. Tip: hak de taak op in de app (Focusmodus → "Te groot?").</p>`}
+      ${tm}
+      <div class="pipfoot"><button class="btn" data-act="pipdone">✓ Klaar</button><button class="btn ghost" data-act="pipnext">Volgende</button></div>
+    </div>`;
+  }
+  d.body.innerHTML=h;
+  tick();
+}
+function pipClick(e){
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const v=b.dataset.v,id=b.dataset.id;S.pipMsg=null;
+  switch(b.dataset.act){
+    case 'step':{const t=S.tasks[id];if(!t)return;const st=(t.steps||[]).map((s,i)=>i===+b.dataset.i?{...s,done:!s.done}:s);upd(id,{steps:st});if(st.every(s=>s.done))S.pipMsg='Alle stapjes gedaan! Tik op ✓ Klaar.';break}
+    case 'pipdone':{const t=pickFocus();if(t){upd(t.id,{done:true,doneAt:Date.now()});stopTimer();S.focusId=null;S.pipMsg=CHEERS[Math.floor(Math.random()*CHEERS.length)]}break}
+    case 'pipnext':{const t=pickFocus();if(t){upd(t.id,{order:Date.now()});const nx=all().filter(x=>x.date===today()&&!x.done&&x.id!==t.id).sort(sortT)[0];S.focusId=nx?nx.id:t.id;stopTimer()}break}
+    case 'timer':startTimer(+v);break;
+    case 'tstop':stopTimer();break;
+    case 'pipclose':try{PIP.close()}catch(_){}return;
+  }
+  renderPip();if(S.focusOpen)renderFocus();
 }
 
 // ---------- feedback ----------
@@ -774,6 +850,7 @@ document.addEventListener('click',async e=>{
     case 'fsplit':{const t=pickFocus();if(t){openEdit(t.id);setTimeout(()=>{const s=document.getElementById('e-step');s&&s.focus()},50)}break}
     case 'timer':startTimer(+v);break;
     case 'tstop':stopTimer();renderFocus();break;
+    case 'pip':openPip();break;
     case 'step':{const t=S.tasks[id];const st=(t.steps||[]).map((s,i)=>i===+b.dataset.i?{...s,done:!s.done}:s);upd(id,{steps:st});if(st[+b.dataset.i].done)toast('Stapje gezet');if(S.editId)renderSheet();break}
     // taak-blad
     case 'setdate':upd(S.editId,{date:v||null});renderSheet();break;
