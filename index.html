@@ -300,6 +300,52 @@ input[type=time]{border:1px solid var(--line);border-radius:12px;padding:9px 11p
 .blkrow .x{color:var(--muted);font-size:22px;width:32px;margin-left:auto}
 nav .in{max-width:640px}
 nav button{font-size:11.5px}
+.smore{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:4px 0 14px}
+.sweek{margin-bottom:24px}
+.sweekhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 8px}
+.sweekhead b{font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:500;font-size:20px}
+.sweekhead .mini{margin-left:auto}
+.sweekhead .hint b{font-family:inherit;font-style:normal;font-size:inherit;font-weight:800}
+.sweek.cur .stable-wrap{box-shadow:0 0 0 2px var(--accent-soft),var(--shadow)}
+.stable-wrap{overflow-x:auto;border-radius:16px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);-webkit-overflow-scrolling:touch}
+.stable{border-collapse:separate;border-spacing:0;width:100%;min-width:780px;table-layout:fixed}
+.stable th,.stable td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px;vertical-align:top}
+.stable tr>*:last-child{border-right:0}
+.stable tbody tr:last-child>*{border-bottom:0}
+.stable thead th{font-size:13px;font-weight:800;padding:9px 8px;text-align:left;background:var(--bg);cursor:pointer}
+.stable thead th span{text-transform:capitalize}
+.stable thead th:hover{color:var(--accent)}
+.stable thead th.today{background:var(--accent-soft);color:var(--accent)}
+.stable thead th.past{color:var(--muted)}
+.stable thead th .ovr{font-style:normal;color:var(--accent)}
+.stable thead th em{display:block;font-style:normal;font-size:10.5px;color:#fff;background:var(--red);border-radius:6px;padding:1px 6px;margin-top:3px;width:max-content;text-transform:uppercase;letter-spacing:.04em}
+.stable .tcol{width:74px;position:sticky;left:0;background:var(--card);z-index:1;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;text-align:left;padding:8px}
+.stable thead .tcol{background:var(--bg);z-index:2;cursor:default;color:var(--muted)}
+.stable .tcol small{display:block;color:var(--muted);font-weight:700}
+.stable td.past{background:color-mix(in srgb,var(--bg) 55%,transparent)}
+.stable td.today{background:color-mix(in srgb,var(--accent-soft) 40%,transparent)}
+.stable td.off{background-image:repeating-linear-gradient(45deg,transparent 0 6px,color-mix(in srgb,var(--line) 55%,transparent) 6px 7px)}
+.stable td>*+*{margin-top:4px}
+.dayrow .tcol{font-size:11.5px;color:var(--muted)}
+.dayrow td{background:color-mix(in srgb,var(--bg) 40%,transparent)}
+.sdaybtn{width:100%;min-height:34px;border-radius:9px;padding:4px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12.5px;font-weight:800;color:var(--muted);text-align:left}
+.sdaybtn:not(.set){border:1.5px dashed var(--line);justify-content:center}
+.sdaybtn:hover{color:var(--accent);border-color:var(--accent)}
+.sdchip{--ec:var(--accent);display:inline-block;padding:3px 8px;border-radius:8px;background:color-mix(in srgb,var(--ec) 22%,var(--card));color:color-mix(in srgb,var(--ec) 55%,var(--ink));font-weight:800;font-size:12px;border-left:3px solid var(--ec)}
+.sdchip.big{font-size:14px;padding:6px 12px}
+.scell{--ec:var(--accent);display:flex;gap:6px;align-items:flex-start;border-radius:10px;padding:6px;min-height:50px;width:100%;text-align:left;font-size:13px}
+.scell.empty{justify-content:center;align-items:center;flex-direction:column;gap:0;color:var(--muted);font-size:18px;font-weight:700;opacity:.5;border:1.5px dashed transparent}
+.scell.empty:hover{opacity:1;background:var(--accent-soft);color:var(--accent)}
+.scell.empty.pre{opacity:1;font-size:12.5px;border-color:color-mix(in srgb,var(--ec) 45%,transparent);color:color-mix(in srgb,var(--ec) 65%,var(--ink));background:color-mix(in srgb,var(--ec) 6%,transparent)}
+.scell.empty.pre span::before{content:"+ "}
+.scell small{display:block;font-size:10.5px;font-weight:700;color:var(--muted)}
+.scell:not(.empty){background:color-mix(in srgb,var(--ec) 16%,var(--card));border-left:3px solid var(--ec)}
+.scell .check{width:20px;height:20px;font-size:11px;border-width:2px;flex:none}
+.scell .sbody{flex:1;min-width:0;cursor:pointer;display:flex;flex-direction:column}
+.scell b{font-size:13px;overflow-wrap:anywhere;line-height:1.25}
+.scell .swhat{font-size:12px;color:var(--muted);overflow-wrap:anywhere;line-height:1.25}
+.scell.done{opacity:.55}.scell.done b{text-decoration:line-through}.scell.done .check{background:var(--accent);border-color:var(--accent)}
+.scell.now{box-shadow:0 0 0 2px var(--accent)}
 </style>
 </head>
 <body>
@@ -355,7 +401,7 @@ const EKIND={activiteit:'Activiteit',les:'Les',examen:'Examen'};
 
 // ---------- state ----------
 const S={tasks:{},src:{},view:'vandaag',week:0,showDone:false,mode:'loading',focusOpen:false,focusId:null,
-  editId:null,ev:null,evNew:false,evOcc:null,editCal:null,sheet:null,delArm:false,timer:null,tInt:null,authMode:'login',sweek:0,ss:null,ssNew:false,sub:null,subNew:false,subBack:null,bed:null,lastSubj:null,
+  editId:null,ev:null,evNew:false,evOcc:null,editCal:null,sheet:null,delArm:false,timer:null,tInt:null,authMode:'login',sweek:0,sfrom:0,scount:4,sd:null,ss:null,ssNew:false,sub:null,subNew:false,subBack:null,bed:null,lastSubj:null,
   theme:lsGet('voila-theme','petrol'),study:null,dmode:lsGet('voila-mode','auto'),cats:DEFAULT_CATS.map(c=>({...c})),hidden:[],shared:{},invites:[]};
 const VIEWS=['vandaag','week','studie','deadlines','inbox','instellingen'];
 const mq=matchMedia('(prefers-color-scheme: dark)');
@@ -378,7 +424,7 @@ function calById(id){return allCals().find(c=>c.id===id)||{id:'prive',name:'Priv
 const calOf=t=>calById(t.cal||'prive');
 const visible=t=>!S.hidden.includes(t.cal||'prive')&&(S.cats.some(c=>c.id===(t.cal||'prive'))||S.shared[t.cal]||!t.cal);
 const defaultCal=()=>(S.cats.find(c=>!S.hidden.includes(c.id))||S.cats[0]||{id:'prive'}).id;
-const all=()=>Object.values(S.tasks).filter(t=>!isEv(t)&&t.type!=='study'&&visible(t));
+const all=()=>Object.values(S.tasks).filter(t=>!t.type&&!isEv(t)&&visible(t));
 const events=()=>Object.values(S.tasks).filter(t=>isEv(t)&&visible(t));
 function occurs(e,d){
   if(!e.date)return false;
@@ -552,7 +598,7 @@ function vVandaag(){
   const ev=evOn(td),nh=nowHM();
   h+=`<h3>In je agenda <span class="cnt">${ev.length}</span><button class="mini" data-act="newev" data-v="${td}">+ activiteit</button></h3>`;
   h+=ev.length?`<div class="lesrow">${ev.map(e=>evHtml(e,td,e.end&&e.end<nh)).join('')}</div>`:`<div class="card empty" style="padding:14px">Geen lessen of afspraken vandaag.</div>`;
-  {const sr=dayStudyRows(td).filter(r=>r.s);if(sr.length)h+=`<h3>Studeren vandaag <span class="cnt">${sr.filter(r=>r.s.done).length}/${sr.length}</span><button class="mini" data-act="view" data-v="studie">Studieplanning</button></h3><div class="sblocks" style="padding:0">${sr.map(r=>studyRowHtml(td,r)).join('')}</div>`}
+  {const sr=dayStudyRows(td).filter(r=>r.s),dp=dayPlan(td);if(!sr.length&&dp&&dp.subjects&&dp.subjects.length)h+=`<h3>Vandaag studeer je<button class="mini" data-act="view" data-v="studie">Studieplanning</button></h3><div class="chips">${dp.subjects.map(id=>{const x=subjById(id);return `<span class="sdchip big" style="--ec:${x.color}">${esc(x.name)}</span>`}).join('')}</div>`;if(sr.length)h+=`<h3>Studeren vandaag <span class="cnt">${sr.filter(r=>r.s.done).length}/${sr.length}</span><button class="mini" data-act="view" data-v="studie">Studieplanning</button></h3><div class="sblocks" style="padding:0">${sr.map(r=>studyRowHtml(td,r)).join('')}</div>`}
   h+=`<div style="height:16px"></div>`+addBox('add-today','Wat moet er vandaag gebeuren?','data-add-date="'+td+'"');
   h+=`<p class="hint">Tip: zet <b>!</b> achteraan voor belangrijk. Tik op een taak voor deadline, tijd, agenda of stapjes.</p>`;
   if(open.length)h+=`<button class="focusbtn" data-act="focus">Focusmodus — één taak tegelijk</button>`+(pipOK()?`<button class="pipbtn" data-act="pip">${PIP?'Mini-venster staat open':'Of: mini-venster in de hoek dat bovenaan blijft'}</button>`:'');
@@ -672,46 +718,82 @@ function studyRowHtml(d,{b,s},compact){
   return `<div class="sblock ${s.done?'done':''} ${now?'now':''}" style="--ec:${sub.color}"><button class="check" data-act="sdone" data-id="${s.id}">${s.done?'✓':''}</button><div class="sbody" data-act="sedit" data-id="${s.id}"><span class="st">${esc(s.start)}–${esc(s.end)}${now?' · nu':''}</span><b>${esc(sub.name)}</b>${s.what?`<span class="swhat">${esc(s.what)}</span>`:''}</div></div>`;
 }
 function studyHtmlForWeek(s){const sub=subjById(s.subject);return `<div class="les ${s.done?'past':''}" style="--ec:${sub.color}" data-act="sedit" data-id="${s.id}"><span class="lt">${esc(s.start)}–${esc(s.end)}</span><span class="kb">Studie</span><span class="ln">${s.done?'✓ ':''}${esc(sub.name)}</span>${s.what?`<span class="lp">${esc(s.what)}</span>`:''}</div>`}
-function vStudie(){
-  const td=today(),start=addDays(monday(td),S.sweek*7),end=addDays(start,6);
+function studyCell(d,list,rowEnd){
+  const now=d===today(),dp=dayPlan(d),dsub=dp&&dp.subjects&&dp.subjects.length?subjById(dp.subjects[0]):null;
+  return list.map(({b,s})=>{
+    const isNow=now&&b.start<=nowHM()&&nowHM()<b.end;
+    const t=b.end!==rowEnd?`<small>${esc(b.start)}–${esc(b.end)}</small>`:'';
+    if(!s)return dsub?`<button class="scell empty pre ${isNow?'now':''}" style="--ec:${dsub.color}" data-act="snew" data-v="${d}|${b.start}|${b.end}" aria-label="Blok plannen">${t}<span>${esc(dsub.name)}${dp.subjects.length>1?' …':''}</span></button>`:`<button class="scell empty ${isNow?'now':''}" data-act="snew" data-v="${d}|${b.start}|${b.end}" aria-label="Blok plannen">${t}+</button>`;
+    const sub=subjById(s.subject);
+    return `<div class="scell ${s.done?'done':''} ${isNow?'now':''}" style="--ec:${sub.color}"><button class="check" data-act="sdone" data-id="${s.id}" aria-label="Afvinken">${s.done?'✓':''}</button><div class="sbody" data-act="sedit" data-id="${s.id}">${t}<b>${esc(sub.name)}</b>${s.what?`<span class="swhat">${esc(s.what)}</span>`:''}</div></div>`;
+  }).join('');
+}
+function studyWeekTable(start){
+  const td=today(),days=[...Array(7)].map((_,i)=>addDays(start,i)),end=days[6];
   const sm=parse(start).getMonth()===parse(end).getMonth();
   const label=sm?`${parse(start).getDate()} – ${fmt(end,{day:'numeric',month:'long'})}`:`${fmt(start,{day:'numeric',month:'short'})} – ${fmt(end,{day:'numeric',month:'short'})}`;
-  const wk=studyAll().filter(s=>s.date>=start&&s.date<=end);
+  const rows=days.map(d=>dayStudyRows(d));
+  const starts=[...new Set(rows.flat().map(r=>r.b.start))].sort();
+  const wk=studyAll().filter(s=>s.date>=start&&s.date<=end),dn=wk.filter(s=>s.done);
+  const hrs=m=>{const u=Math.floor(m/60),r=m%60;return u+'u'+(r?' '+r+'m':'')};
+  const thisWeek=start===monday(td);
+  let h=`<section class="sweek ${thisWeek?'cur':''}"><div class="sweekhead"><b>${thisWeek?'Deze week · ':''}${label}</b><span class="hint" style="margin:0">${wk.length?`<b>${dn.length}/${wk.length}</b> blokken · ${hrs(dn.reduce((a,x)=>a+minsOf(x.start,x.end),0))} van ${hrs(wk.reduce((a,x)=>a+minsOf(x.start,x.end),0))}`:'nog niets gepland'}</span><button class="mini grey" data-act="scopy" data-v="${start}">Kopieer vorige week</button></div>`;
+  h+=`<div class="stable-wrap"><table class="stable"><thead><tr><th class="tcol">Blok</th>${days.map(d=>{
+    const ov=!!(S.study.over&&S.study.over[d]),ex=evOn(d).filter(e=>e.ekind==='examen');
+    return `<th class="${d===td?'today':''} ${d<td?'past':''}" data-act="dayblocks" data-v="${d}" title="Uren van deze dag aanpassen"><span>${WDS[wdOf(d)]}</span> ${parse(d).getDate()}/${parse(d).getMonth()+1}${ov?' <i class="ovr">✎</i>':''}${ex.map(e=>`<em title="${esc(e.title)}">examen</em>`).join('')}</th>`}).join('')}</tr></thead><tbody>`;
+  h+=`<tr class="dayrow"><th class="tcol">Vak v/d dag</th>${days.map(d=>{const dp=dayPlan(d),sl=(dp&&dp.subjects||[]).map(subjById);
+    return `<td class="${d===td?'today':''} ${d<td?'past':''}"><button class="sdaybtn ${sl.length?'set':''}" data-act="sday" data-v="${d}">${sl.length?sl.map(x=>`<span class="sdchip" style="--ec:${x.color}">${esc(x.name)}</span>`).join(''):'+ vak'}</button></td>`}).join('')}</tr>`;
+  if(!starts.length)h+=`<tr><td colspan="8" class="hint" style="padding:14px">Geen studieblokken deze week. Stel je uren in via "Uren van studieblokken".</td></tr>`;
+  starts.forEach(st=>{
+    const ends=rows.flat().filter(r=>r.b.start===st).map(r=>r.b.end);
+    const rowEnd=ends.sort((a,b)=>ends.filter(x=>x===b).length-ends.filter(x=>x===a).length)[0]||'';
+    h+=`<tr><th class="tcol">${esc(st)}<small>${esc(rowEnd)}</small></th>`;
+    days.forEach((d,i)=>{const l=rows[i].filter(r=>r.b.start===st);h+=`<td class="${d===td?'today':''} ${d<td?'past':''} ${l.length?'':'off'}">${studyCell(d,l,rowEnd)}</td>`});
+    h+=`</tr>`;
+  });
+  return h+`</tbody></table></div></section>`;
+}
+function vStudie(){
+  const td=today();
   let h=`<h2 class="big">Studeerplanning</h2>`;
-  // vandaag: huidig/volgend blok
-  if(S.sweek===0){
-    const rows=dayStudyRows(td).filter(r=>r.s&&!r.s.done&&r.b.end>nowHM());
-    if(rows.length){const r=rows[0],sub=subjById(r.s.subject),now=r.b.start<=nowHM();
-      h+=`<div class="card snow" style="--ec:${sub.color}"><div class="flabel">${now?'Nu studeren':'Volgend blok'} · ${esc(r.s.start)}–${esc(r.s.end)}</div><div class="snowt">${esc(sub.name)}</div>${r.s.what?`<div class="swhat">${esc(r.s.what)}</div>`:''}<div class="row" style="margin-top:10px"><button class="btn" data-act="sdone" data-id="${r.s.id}">✓ Blok klaar</button>${now?`<button class="btn ghost" data-act="stimer" data-v="${minsOf(nowHM(),r.s.end)}">Timer tot ${esc(r.s.end)}</button>`:''}</div></div>`}
-  }
-  // vakken
+  const rows=dayStudyRows(td).filter(r=>r.s&&!r.s.done&&r.b.end>nowHM());
+  if(rows.length){const r=rows[0],sub=subjById(r.s.subject),now=r.b.start<=nowHM();
+    h+=`<div class="card snow" style="--ec:${sub.color}"><div class="flabel">${now?'Nu studeren':'Volgend blok'} · ${esc(r.s.start)}–${esc(r.s.end)}</div><div class="snowt">${esc(sub.name)}</div>${r.s.what?`<div class="swhat">${esc(r.s.what)}</div>`:''}<div class="row" style="margin-top:10px"><button class="btn" data-act="sdone" data-id="${r.s.id}">✓ Blok klaar</button>${now?`<button class="btn ghost" data-act="stimer" data-v="${minsOf(nowHM(),r.s.end)}">Timer tot ${esc(r.s.end)}</button>`:''}</div></div>`}
+  {const dp=dayPlan(td);if(dp&&dp.subjects&&dp.subjects.length&&!rows.length)h+=`<div class="card snow" style="--ec:${subjById(dp.subjects[0]).color}"><div class="flabel">Vandaag studeer je</div><div class="snowt">${dp.subjects.map(id=>esc(subjById(id).name)).join(' · ')}</div><div class="row" style="margin-top:10px"><button class="btn ghost" data-act="sday" data-v="${td}">Verdeel over je blokken</button></div></div>`}
+  const thisMon=monday(td),wk=studyAll().filter(s=>s.date>=thisMon&&s.date<=addDays(thisMon,6));
   h+=`<h3>Vakken <span class="cnt">${S.study.subjects.length}</span></h3><div class="subjects">`;
   h+=S.study.subjects.map(sub=>{const ex=examOf(sub),n=ex?diff(td,ex):null;const mine=wk.filter(s=>s.subject===sub.id),dn=mine.filter(s=>s.done).length;
-    return `<button class="subj" style="--ec:${sub.color}" data-act="subedit" data-id="${sub.id}"><b>${esc(sub.name)}</b><small>${mine.length?`${dn}/${mine.length} blokken deze week`:'nog niet gepland'}</small>${ex?`<span class="chip ${n<=3?'red':n<=10?'orange':''}">${n<0?'examen voorbij':n===0?'examen vandaag':n===1?'examen morgen':'examen over '+n+' d'}</span>`:''}</button>`}).join('');
+    return `<button class="subj" style="--ec:${sub.color}" data-act="subedit" data-id="${sub.id}"><b>${esc(sub.name)}</b><small>${mine.length?`${dn}/${mine.length} blokken deze week`:'deze week nog niet gepland'}</small>${ex?`<span class="chip ${n<=3?'red':n<=10?'orange':''}">${n<0?'examen voorbij':n===0?'examen vandaag':n===1?'examen morgen':'examen over '+n+' d'}</span>`:''}</button>`}).join('');
   h+=`<button class="subj add" data-act="subnew">+ Vak toevoegen</button></div>`;
-  // week
-  const done=wk.filter(s=>s.done),hrs=m=>{const u=Math.floor(m/60),r=m%60;return u+'u'+(r?' '+r+'m':'')};
-  h+=`<div class="weeknav" style="margin-top:22px"><button class="arrow" data-act="swprev" aria-label="Vorige week">‹</button><b>${label}</b><button class="arrow" data-act="swnext" aria-label="Volgende week">›</button>${S.sweek?'<button class="mini" data-act="swnow">Deze week</button>':''}</div>`;
-  h+=`<div class="row" style="margin:-4px 0 14px"><span class="hint" style="margin:0"><b>${done.length}/${wk.length}</b> blokken gedaan · ${hrs(done.reduce((s,x)=>s+minsOf(x.start,x.end),0))} van ${hrs(wk.reduce((s,x)=>s+minsOf(x.start,x.end),0))}</span><button class="mini" data-act="blocksedit" style="margin-left:auto">Uren van studieblokken</button><button class="mini grey" data-act="scopy" data-v="${start}">Kopieer vorige week</button></div>`;
-  h+=`<div class="grid">`;
-  for(let i=0;i<7;i++){
-    const d=addDays(start,i),rows=dayStudyRows(d),ov=!!(S.study.over&&S.study.over[d]);
-    h+=`<div class="card day ${d===td?'today':''} ${d<td?'past':''}"><div class="dayhead"><b>${fmt(d,{weekday:'long'})}</b><small>${parse(d).getDate()}/${parse(d).getMonth()+1}</small></div>`;
-    h+=evOn(d).filter(e=>e.ekind==='examen').map(e=>evHtml(e,d,false)).join('');
-    h+=`<div class="sblocks">${rows.length?rows.map(r=>studyRowHtml(d,r)).join(''):'<div class="hint" style="padding:6px 4px">Geen studieblokken</div>'}</div>`;
-    h+=`<button class="dayblk" data-act="dayblocks" data-v="${d}">${ov?'Aangepaste uren ✎':'Uren deze dag ✎'}</button></div>`;
-  }
-  h+=`</div>`;
-  if(!S.study.subjects.length)h+=`<p class="hint" style="margin-top:14px">Begin met je vakken toe te voegen. Tik daarna op "+ plannen" in een blok.</p>`;
+  h+=`<div class="row" style="margin:24px 0 12px"><button class="mini" data-act="blocksedit">Uren van studieblokken</button><span class="hint" style="margin:0">Tik op een dag bovenaan de tabel om alleen die dag aan te passen.</span></div>`;
+  h+=`<div class="smore"><button class="mini grey" data-act="swprev">↑ Vorige week tonen</button>${S.sfrom!==0||S.scount!==4?'<button class="mini grey" data-act="swnow">Terug naar deze week</button>':''}</div>`;
+  const first=addDays(monday(td),S.sfrom*7);
+  for(let i=0;i<S.scount;i++)h+=studyWeekTable(addDays(first,i*7));
+  h+=`<div class="smore"><button class="btn ghost" data-act="swnext">↓ Meer weken tonen</button></div>`;
+  if(!S.study.subjects.length)h+=`<p class="hint">Begin met je vakken toe te voegen. Tik daarna op een + in de tabel.</p>`;
   return h;
 }
+
+// ---- vak van de dag ----
+const sdId=d=>'sd'+d.replace(/-/g,'');
+const dayPlan=d=>S.tasks[sdId(d)]||null;
+function openSday(d,subjects){const dp=dayPlan(d);S.sd={date:d,subjects:subjects||(dp&&dp.subjects?[...dp.subjects]:[])};S.editId=null;openSheet('sday');renderSdaySheet()}
+function renderSdaySheet(){
+  const s=S.sd,el=$sheet(),free=dayStudyRows(s.date).filter(r=>!r.s).length;
+  el.innerHTML=`<div class="sheettag">Vak van de dag</div><div class="tin" style="border:0;padding-bottom:4px;text-transform:capitalize">${esc(fmt(s.date,{weekday:'long',day:'numeric',month:'long'}))}</div>
+   <p class="hint" style="margin-top:0">Kies welk vak (of welke vakken) je die dag studeert. De blokken vul je later in, of meteen met de knop hieronder.</p>
+   <label>Vakken</label><div class="chips">${S.study.subjects.map(sub=>`<button class="pick calpick ${s.subjects.includes(sub.id)?'on':''}" style="--cc:${sub.color}" data-act="sdsub" data-v="${sub.id}"><i style="background:${sub.color}"></i>${esc(sub.name)}</button>`).join('')}<button class="pick" data-act="subnew" data-v="from">+ nieuw vak</button></div>
+   ${s.subjects.length&&free?`<label>Blokken</label><div class="chips"><button class="pick" data-act="sdfill">Vul ${free} lege blok${free>1?'ken':''} met ${s.subjects.length>1?'deze vakken (om de beurt)':esc(subjById(s.subjects[0]).name)}</button></div>`:''}
+   <div class="sheetfoot">${dayPlan(s.date)?'<button class="danger" data-act="sdclear">Wissen</button>':'<button class="danger" style="color:var(--muted)" data-act="sheetclose">Annuleren</button>'}<button class="btn" data-act="sdsave">Opslaan</button></div>`;
+}
+function saveSday(){const s=S.sd;if(s.subjects.length)put({id:sdId(s.date),type:'studyday',date:s.date,subjects:s.subjects,cal:'school'});else if(dayPlan(s.date))del(sdId(s.date))}
 // ---- bladen voor studie ----
 function openStudy(s,isNew){S.ss=s;S.ssNew=isNew;S.editId=null;openSheet('study');renderStudySheet()}
 function readSS(){const g=id=>{const x=document.getElementById(id);return x?x.value:''};return {...S.ss,what:g('ss-what').trim(),date:g('ss-date'),start:g('ss-start'),end:g('ss-end')}}
 function renderStudySheet(){
   const s=S.ss,el=$sheet();
   el.innerHTML=`<div class="sheettag">Studieblok</div>
-   <label style="margin-top:6px">Vak</label><div class="chips">${S.study.subjects.map(sub=>`<button class="pick calpick ${s.subject===sub.id?'on':''}" style="--cc:${sub.color}" data-act="sssub" data-v="${sub.id}"><i style="background:${sub.color}"></i>${esc(sub.name)}</button>`).join('')}<button class="pick" data-act="subnew" data-v="fromss">+ nieuw vak</button></div>
+   <label style="margin-top:6px">Vak</label><div class="chips">${S.study.subjects.map(sub=>`<button class="pick calpick ${s.subject===sub.id?'on':''}" style="--cc:${sub.color}" data-act="sssub" data-v="${sub.id}"><i style="background:${sub.color}"></i>${esc(sub.name)}</button>`).join('')}<button class="pick" data-act="subnew" data-v="from">+ nieuw vak</button></div>
    <label>Wat ga je doen? (optioneel)</label><input class="stepadd" id="ss-what" value="${esc(s.what||'')}" placeholder="bv. Hoofdstuk 3 samenvatten, oefeningen 1-10" autocomplete="off">
    <label>Wanneer</label><div class="chips"><input type="date" id="ss-date" value="${s.date}"><input type="time" id="ss-start" value="${s.start}"><span style="color:var(--muted)">tot</span><input type="time" id="ss-end" value="${s.end}"></div>
    ${S.ssNew?'':`<label>Gedaan?</label><div class="chips"><button class="pick ${s.done?'on':''}" data-act="ssdonet">${s.done?'✓ Ja, gedaan':'Nog niet'}</button></div>`}
@@ -751,10 +833,10 @@ function blocksValid(bl){for(const x of bl){if(!x.start||!x.end||x.end<=x.start)
 async function studyClick(act,b,e){
   const id=b.dataset.id,v=b.dataset.v;
   switch(act){
-    case 'swprev':S.sweek--;render();return true;
-    case 'swnext':S.sweek++;render();return true;
-    case 'swnow':S.sweek=0;render();return true;
-    case 'snew':{const [d,s,en]=v.split('|');openStudy({type:'study',date:d,start:s,end:en,subject:S.lastSubj&&S.study.subjects.some(x=>x.id===S.lastSubj)?S.lastSubj:(S.study.subjects[0]||{}).id||'',what:'',done:false,cal:'school'},true);return true}
+    case 'swprev':S.sfrom--;S.scount++;render();return true;
+    case 'swnext':S.scount+=4;render();return true;
+    case 'swnow':S.sfrom=0;S.scount=4;render();scrollTo(0,0);return true;
+    case 'snew':{const [d,s,en]=v.split('|');const dp=dayPlan(d),used=studyOn(d).map(x=>x.subject);const dsub=dp&&dp.subjects&&dp.subjects.length?(dp.subjects.find(x=>!used.includes(x))||dp.subjects[0]):null;openStudy({type:'study',date:d,start:s,end:en,subject:dsub?dsub:S.lastSubj&&S.study.subjects.some(x=>x.id===S.lastSubj)?S.lastSubj:(S.study.subjects[0]||{}).id||'',what:'',done:false,cal:'school'},true);return true}
     case 'sedit':{const t=S.tasks[id];if(t)openStudy({...t},false);return true}
     case 'sdone':{const t=S.tasks[id];if(!t)return true;const nd=!t.done;upd(id,{done:nd,doneAt:nd?Date.now():null});if(nd){const r=e.target.getBoundingClientRect();celebrate(r.left+r.width/2,r.top+r.height/2)}return true}
     case 'stimer':S.focusOpen=false;startTimer(Math.max(1,+v));if(pipOK())openPip();else{S.focusOpen=true;renderFocus()}toast('Timer loopt tot het einde van je blok');return true;
@@ -763,13 +845,18 @@ async function studyClick(act,b,e){
     case 'sssave':{const s=readSS();if(!s.subject&&S.study.subjects.length){toast('Kies een vak');return true}if(!s.date||!s.start||!s.end||s.end<=s.start){toast('Controleer de uren');return true}
       S.lastSubj=s.subject;put({...s,type:'study',cal:'school',id:s.id||newId(),created:s.created||Date.now()});closeEdit();toast(S.ssNew?'Ingepland':'Opgeslagen');return true}
     case 'ssdel':if(!S.delArm){S.ss=readSS();S.delArm=true;renderStudySheet()}else{const i=S.ss.id;closeEdit();del(i);toast('Verwijderd')}return true;
-    case 'subnew':{if(S.sheet==='study')S.ss=readSS();openSubj({id:'',name:'',color:CAT_COLORS[S.study.subjects.length%CAT_COLORS.length],examDate:null},true,v==='fromss'?S.ss:null);return true}
+    case 'subnew':{let back=null;if(v==='from'&&S.sheet==='study')back={kind:'ss',obj:readSS(),isNew:S.ssNew};else if(v==='from'&&S.sheet==='sday')back={kind:'sd',obj:{...S.sd}};openSubj({id:'',name:'',color:CAT_COLORS[S.study.subjects.length%CAT_COLORS.length],examDate:null},true,back);return true}
     case 'subedit':{const s=S.study.subjects.find(x=>x.id===id);if(s)openSubj(s,false);return true}
     case 'subcolor':syncSub();S.sub.color=v;renderSubjSheet();return true;
     case 'subsave':{syncSub();const s=S.sub,name=(s.name||'').trim();if(!name){document.getElementById('sub-name').focus();return true}
       let sid=s.id;if(S.subNew){sid='s'+newId();S.study.subjects=[...S.study.subjects,{id:sid,name,color:s.color,examDate:s.examDate||null}]}else S.study.subjects=S.study.subjects.map(x=>x.id===s.id?{...x,name,color:s.color,examDate:s.examDate||null}:x);
-      saveStudy();const back=S.subBack;if(back){openStudy({...back,subject:sid},S.ssNew)}else{closeEdit()}render();toast(S.subNew?'Vak toegevoegd':'Opgeslagen');return true}
+      saveStudy();const back=S.subBack,wasNew=S.subNew;if(back&&back.kind==='ss'){openStudy({...back.obj,subject:sid},back.isNew)}else if(back&&back.kind==='sd'){openSday(back.obj.date,[...back.obj.subjects,sid])}else{closeEdit()}render();toast(wasNew?'Vak toegevoegd':'Opgeslagen');return true}
     case 'subdel':if(!S.delArm){syncSub();S.delArm=true;renderSubjSheet()}else{S.study.subjects=S.study.subjects.filter(x=>x.id!==S.sub.id);saveStudy();closeEdit();render();toast('Vak verwijderd')}return true;
+    case 'sday':openSday(v);return true;
+    case 'sdsub':S.sd.subjects=S.sd.subjects.includes(v)?S.sd.subjects.filter(x=>x!==v):[...S.sd.subjects,v];renderSdaySheet();return true;
+    case 'sdsave':saveSday();closeEdit();toast('Vak van de dag opgeslagen');return true;
+    case 'sdclear':{const d=S.sd.date;closeEdit();del(sdId(d));toast('Gewist');return true}
+    case 'sdfill':{const s=S.sd;saveSday();const free=dayStudyRows(s.date).filter(r=>!r.s);free.forEach((r,i)=>put({id:newId(),type:'study',date:s.date,start:r.b.start,end:r.b.end,subject:s.subjects[i%s.subjects.length],what:'',done:false,cal:'school',created:Date.now()+i}));closeEdit();toast(`${free.length} blok${free.length>1?'ken':''} ingepland`);return true}
     case 'blocksedit':openBlocks('tpl');return true;
     case 'dayblocks':openBlocks('day',v);return true;
     case 'blkwd':{syncBlocks();const err=blocksValid(S.bed.blocks);if(err){toast(err);return true}S.study.tpl={...S.study.tpl,[S.bed.wd]:sortBl(S.bed.blocks)};saveStudy();S.bed.wd=+v;S.bed.blocks=sortBl(S.study.tpl[+v]||[]).map(x=>({...x}));renderBlocksSheet();return true}
@@ -811,7 +898,7 @@ function render(){
 // ---------- bladen (sheets) ----------
 const $wrap=()=>document.getElementById('sheetwrap'),$sheet=()=>document.getElementById('sheet');
 function openSheet(kind){S.sheet=kind;S.delArm=false;$wrap().hidden=false}
-function closeEdit(){const ti=document.getElementById('e-title');if(ti&&S.editId)saveTitle(ti.value);S.editId=null;S.ev=null;S.editCal=null;S.ss=null;S.sub=null;S.bed=null;S.sheet=null;$wrap().hidden=true}
+function closeEdit(){const ti=document.getElementById('e-title');if(ti&&S.editId)saveTitle(ti.value);S.editId=null;S.ev=null;S.editCal=null;S.ss=null;S.sub=null;S.bed=null;S.sd=null;S.sheet=null;$wrap().hidden=true}
 function refreshSheet(){if(S.sheet==='task'&&S.editId)renderSheet();else if(S.sheet==='cal'&&S.editCal&&S.editCal.shared&&!S.editCal.new){const c=S.shared[S.editCal.id];if(c){S.editCal={...S.editCal,members:c.members,memberEmails:c.memberEmails,invites:c.invites,owner:c.owner}}renderCalSheet()}}
 const calPicker=(cur,act)=>`<div class="chips">${allCals().map(c=>`<button class="pick calpick ${cur===c.id?'on':''}" style="--cc:${c.color}" data-act="${act}" data-v="${c.id}"><i style="background:${c.color}"></i>${esc(c.name)}</button>`).join('')}</div>`;
 
