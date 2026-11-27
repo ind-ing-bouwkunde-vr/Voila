@@ -5,7 +5,7 @@
 Een rustige, ADHD-vriendelijke to-do- en weekplanner die werkt op pc, tablet en iPhone.
 
 - **Vandaag** met een top 3, voortgang en een focusmodus (één taak tegelijk, met timer)
-- **Weekplanning** met taken en lessen per dag, en lessen kopiëren van vorige week
+- **Planning**: één tabel per week met taken, deadlines, lessen, activiteiten, examens en studieblokken; meerdere weken onder elkaar
 - **Agenda's**: Privé, School, Werk en eigen agenda's, elk met een kleur; aan/uit te zetten
 - **Activiteiten** (afspraken, lessen, examens), eventueel elke week of om de week herhalend
 - **Gedeelde agenda's** met andere Voilà-gebruikers (uitnodigen via e-mail)
