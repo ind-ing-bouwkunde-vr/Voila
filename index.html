@@ -883,15 +883,15 @@ function sideHtml(){
   const td=today(),thisMon=monday(td),wk=studyAll().filter(s=>s.date>=thisMon&&s.date<=addDays(thisMon,6));
   const inbox=all().filter(t=>!t.date&&!t.done).sort(sortT);
   let h=`<button class="sidetog" data-act="sidetog" title="${S.side?'Menu inklappen':'Menu openen'}">${S.side?'‹ Inklappen':'›'}</button>`;
-  if(!S.side)return h+`<div class="siderail" data-act="sidetog"><span>Vakken · Nog in te plannen${inbox.length?' ('+inbox.length+')':''}</span></div>`;
+  if(!S.side)return h+`<div class="siderail" data-act="sidetog"><span>Nog in te plannen${inbox.length?' ('+inbox.length+')':''} · Vakken</span></div>`;
+  h+=`<div class="sidesec"><div class="sidet">Nog in te plannen <span class="cnt">${inbox.length}</span></div>`;
+  h+=inbox.length?inbox.map(t=>`<div class="stask ${t.important?'imp':''}"><span class="tt" data-act="edit" data-id="${t.id}">${t.important?'★ ':''}${esc(t.title)}</span><button class="mini" data-act="plan" data-id="${t.id}">Plan in</button></div>`).join(''):`<p class="hint" style="margin:4px 2px">Alles heeft een plekje.</p>`;
+  h+=`<div class="sideadd"><input id="side-add" data-add-date="" placeholder="+ taak zonder dag" autocomplete="off" enterkeyhint="done"></div></div>`;
   h+=`<div class="sidesec"><div class="sidet">Vakken <span class="cnt">${S.study.subjects.length}</span></div>`;
   h+=S.study.subjects.map(sub=>{const ex=examOf(sub),n=ex?diff(td,ex):null;const mine=wk.filter(s=>s.subject===sub.id),dn=mine.filter(s=>s.done).length;
     const days=subjDays(sub.id),left=days.filter(x=>x>=td&&(!ex||x<=ex)).length;
     return `<button class="subj" style="--ec:${sub.color}" data-act="subedit" data-id="${sub.id}"><b>${esc(sub.name)}</b><span class="sdays"><strong>${days.length}</strong> dag${days.length===1?'':'en'} ingepland${days.length?` · nog ${left}`:''}</span><small>${mine.length?`${dn}/${mine.length} blokken deze week`:'deze week nog geen blokken'}</small>${ex?`<span class="chip ${n<=3?'red':n<=10?'orange':''}">${n<0?'examen voorbij':n===0?'examen vandaag':n===1?'examen morgen':'examen over '+n+' d'}</span>`:''}</button>`}).join('');
   h+=`<button class="subj add" data-act="subnew">+ Vak toevoegen</button><button class="mini" data-act="blocksedit" style="margin-top:6px;width:100%">Uren van studieblokken</button></div>`;
-  h+=`<div class="sidesec"><div class="sidet">Nog in te plannen <span class="cnt">${inbox.length}</span></div>`;
-  h+=inbox.length?inbox.map(t=>`<div class="stask ${t.important?'imp':''}"><span class="tt" data-act="edit" data-id="${t.id}">${t.important?'★ ':''}${esc(t.title)}</span><button class="mini" data-act="plan" data-id="${t.id}">Plan in</button></div>`).join(''):`<p class="hint" style="margin:4px 2px">Alles heeft een plekje.</p>`;
-  h+=`<div class="sideadd"><input id="side-add" data-add-date="" placeholder="+ taak zonder dag" autocomplete="off" enterkeyhint="done"></div></div>`;
   return h;
 }
 function vStudie(){
