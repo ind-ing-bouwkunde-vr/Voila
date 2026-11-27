@@ -430,6 +430,8 @@ nav button{font-size:11.5px}
 .cit>.scell small{order:-1}
 .nowline{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:2;pointer-events:none}
 .nowline::before{content:"";position:absolute;left:-4px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--red)}
+.ptitle{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.xsel{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:var(--bg);font-weight:700;font-size:15px}
 </style>
 </head>
 <body>
@@ -896,7 +898,7 @@ function sideHtml(){
 }
 function vStudie(){
   const td=today();
-  let m=`<h2 class="big">Planning</h2>`+calBar();
+  let m=`<div class="ptitle"><h2 class="big">Planning</h2><button class="mini" data-act="xpopen">Exporteer naar Excel</button></div>`+calBar();
   const rows=dayStudyRows(td).filter(r=>r.s&&!r.s.done&&r.b.end>nowHM());
   if(rows.length){const r=rows[0],sub=subjById(r.s.subject),now=r.b.start<=nowHM();
     m+=`<div class="card snow" style="--ec:${sub.color}"><div class="flabel">${now?'Nu studeren':'Volgend blok'} · ${esc(r.s.start)}–${esc(r.s.end)}</div><div class="snowt" title="${esc(sub.name)}">${esc(r.s.what||sub.name)}</div><div class="row" style="margin-top:10px"><button class="btn" data-act="sdone" data-id="${r.s.id}">✓ Blok klaar</button>${now?`<button class="btn ghost" data-act="stimer" data-v="${minsOf(nowHM(),r.s.end)}">Timer tot ${esc(r.s.end)}</button>`:''}</div></div>`}
@@ -906,6 +908,111 @@ function vStudie(){
   for(let i=0;i<S.scount;i++)m+=studyWeekTable(addDays(first,i*7));
   m+=`<div class="smore"><button class="btn ghost" data-act="swnext">↓ Meer weken tonen</button></div>`;
   return `<div class="plan ${S.side?'':'noside'}"><aside class="side">${sideHtml()}</aside><div class="pmain">${m}</div></div>`;
+}
+
+
+// ---------- exporteren naar Excel ----------
+let XL=null;
+function loadXlsx(){if(XL)return Promise.resolve(XL);return new Promise((res,rej)=>{const s=document.createElement('script');s.src='./lib/xlsx-js-style.min.js';s.onload=()=>{XL=window.XLSX;XL?res(XL):rej(new Error('geen XLSX'))};s.onerror=()=>rej(new Error('laden mislukt'));document.head.appendChild(s)})}
+function weekLabel(st){const en=addDays(st,6);return `${parse(st).getDate()} ${fmt(st,{month:'short'})} – ${parse(en).getDate()} ${fmt(en,{month:'short'})}${parse(en).getFullYear()!==new Date().getFullYear()?' '+parse(en).getFullYear():''}`}
+function openExport(){
+  const td=today(),cur=monday(td);
+  S.xp={from:cur,to:addDays(cur,21),tasks:true,events:true,study:true,dayplan:true,list:true};
+  openSheet('export');renderExport();
+}
+function renderExport(){
+  const x=S.xp,el=$sheet(),cur=monday(today());
+  const opts=[...Array(39)].map((_,i)=>addDays(cur,(i-8)*7));
+  const sel=(id,val)=>`<select id="${id}" class="xsel">${opts.map(w=>`<option value="${w}" ${w===val?'selected':''}>${w===cur?'Deze week · ':''}${esc(weekLabel(w))}</option>`).join('')}</select>`;
+  const n=Math.round(diff(x.from,x.to)/7)+1;
+  const ck=(k,l)=>`<button class="pick ${x[k]?'on':''}" data-act="xpt" data-v="${k}">${x[k]?'✓ ':''}${l}</button>`;
+  el.innerHTML=`<div class="sheettag">Exporteren naar Excel</div>
+   <label style="margin-top:4px">Van week</label>${sel('xp-from',x.from)}
+   <label>Tot en met week</label>${sel('xp-to',x.to)}
+   <div class="chips" style="margin-top:8px">${[[1,'1 week'],[2,'2 weken'],[4,'4 weken'],[8,'8 weken']].map(([k,l])=>`<button class="pick ${n===k&&x.from<=x.to?'on':''}" data-act="xpn" data-v="${k}">${l}</button>`).join('')}</div>
+   <label>Wat moet erin?</label><div class="chips">${ck('tasks','Taken & deadlines')}${ck('events','Lessen & activiteiten')}${ck('study','Studieblokken')}${ck('dayplan','Vak van de dag')}${ck('list','Extra tabblad met lijst')}</div>
+   <p class="hint">${x.to<x.from?'<b style="color:var(--red)">De eindweek ligt vóór de beginweek.</b>':`Je krijgt <b>${n}</b> tabblad${n>1?'en':''} (één per week)${x.list?' en een lijst om te filteren':''}. Verborgen agenda's worden niet meegenomen.`}</p>
+   <div class="aerr" id="xp-msg"></div>
+   <div class="sheetfoot"><button class="danger" style="color:var(--muted)" data-act="sheetclose">Annuleren</button><button class="btn" data-act="xpgo" ${x.to<x.from?'disabled':''}>Download Excel</button></div>`;
+}
+const hexMix=(hex,p)=>{const n=parseInt(hex.replace('#',''),16),r=n>>16,g=(n>>8)&255,b=n&255,m=c=>Math.round(c+(255-c)*p).toString(16).padStart(2,'0');return (m(r)+m(g)+m(b)).toUpperCase()};
+const hexDark=(hex,p)=>{const n=parseInt(hex.replace('#',''),16),r=n>>16,g=(n>>8)&255,b=n&255,m=c=>Math.round(c*(1-p)).toString(16).padStart(2,'0');return (m(r)+m(g)+m(b)).toUpperCase()};
+function buildWorkbook(X){
+  const x=S.xp,wb=X.utils.book_new(),A=all(),list=[];
+  const thin={style:'thin',color:{rgb:'D9D9D9'}},border={top:thin,bottom:thin,left:thin,right:thin};
+  const base={font:{name:'Calibri',sz:10},alignment:{wrapText:true,vertical:'top'},border};
+  const head={...base,font:{name:'Calibri',sz:11,bold:true},fill:{fgColor:{rgb:'EEF2F1'}},alignment:{vertical:'center',wrapText:true}};
+  const lab={...base,font:{name:'Calibri',sz:9,bold:true,color:{rgb:'666666'}},fill:{fgColor:{rgb:'F7F7F7'}}};
+  const cell=(v,s)=>({v:v??'',t:'s',s});
+  const usedNames=new Set();
+  for(let w=x.from;w<=x.to;w=addDays(w,7)){
+    const days=[...Array(7)].map((_,i)=>addDays(w,i));
+    const items=days.map(d=>{let it=[];if(x.events)it=it.concat(timedOn(d).map(e=>({b:{start:e.start,end:exEnd(e)},ex:e})));if(x.study)it=it.concat(studyOn(d).map(s=>({b:{start:s.start,end:s.end},s})));return it.map(r=>({...r,ts:toMin(r.b.start),te:Math.max(toMin(r.b.start)+15,toMin(r.b.end))})).sort((a,b)=>a.ts-b.ts)});
+    const flat=items.flat();
+    const from=Math.max(0,Math.min(8,...flat.map(i=>Math.floor(i.ts/60)))),to=Math.min(24,Math.max(18,...flat.map(i=>Math.ceil(i.te/60))));
+    const SLOT=30,nslots=(to-from)*60/SLOT;
+    const rows=[],merges=[];
+    rows.push([cell(`Week ${weekLabel(w)}`,{font:{name:'Calibri',sz:14,bold:true},alignment:{vertical:'center'}})]);
+    rows.push([cell('Uur',head),...days.map(d=>{const f=feestOf(d);return cell(`${WD[wdOf(d)]} ${parse(d).getDate()}/${parse(d).getMonth()+1}${f?'\n'+f.n:''}`,{...head,fill:{fgColor:{rgb:f?hexMix(f.c,.8):d===today()?'DCEDEA':'EEF2F1'}}})})]);
+    let r0=2;
+    if(x.tasks){
+      rows.push([cell('Taken & deadlines',lab),...days.map(d=>{
+        const ts=A.filter(t=>t.date===d).sort((a,b)=>(a.done-b.done)||sortT(a,b)),dls=A.filter(t=>t.deadline===d&&!t.done&&t.date!==d);
+        const allday=x.events?evOn(d).filter(e=>!e.start):[];
+        ts.forEach(t=>list.push([d,WD[wdOf(d)],'','','Taak',t.title,calOf(t).name,t.done?'ja':'nee']));
+        dls.forEach(t=>list.push([d,WD[wdOf(d)],'','','Deadline',t.title,calOf(t).name,'nee']));
+        return cell([...allday.map(e=>`[${EKIND[e.ekind||'activiteit']}] ${e.title}`),...ts.map(t=>`${t.done?'☑':'☐'} ${t.important?'★ ':''}${t.title}`),...dls.map(t=>`⚑ Deadline: ${t.title}`)].join('\n'),{...base,fill:{fgColor:{rgb:dls.length?'FCE4E8':'FFFFFF'}}})})]);
+      r0++;
+    }
+    if(x.dayplan){
+      rows.push([cell('Vak v/d dag',lab),...days.map(d=>{const dp=dayPlan(d),sl=(dp&&dp.subjects||[]).map(subjById);return cell(sl.map(s=>s.name).join(', '),{...base,font:{name:'Calibri',sz:10,bold:true,color:{rgb:sl[0]?hexDark(sl[0].color,.25):'000000'}},fill:{fgColor:{rgb:sl[0]?hexMix(sl[0].color,.82):'FFFFFF'}}})})]);
+      r0++;
+    }
+    for(let k=0;k<nslots;k++){const m=from*60+k*SLOT;rows.push([cell(m%60===0?`${Math.floor(m/60)}u`:'',{...lab,alignment:{vertical:'top',horizontal:'right'}}),...days.map(()=>cell('',{...base,border:{left:thin,right:thin,top:m%60===0?thin:{style:'hair',color:{rgb:'EEEEEE'}},bottom:{style:'hair',color:{rgb:'EEEEEE'}}}}))])}
+    days.forEach((d,ci)=>{
+      const busy=new Array(nslots).fill(null);
+      items[ci].forEach(it=>{
+        const s0=Math.max(0,Math.floor((it.ts-from*60)/SLOT)),s1=Math.min(nslots-1,Math.ceil((it.te-from*60)/SLOT)-1);
+        let txt,color,kind;
+        if(it.ex){const e=it.ex;kind=EKIND[e.ekind||'activiteit'];txt=`${kind} · ${it.b.start}–${it.b.end}\n${e.title}${e.place?'\n'+e.place:''}`;color=e.ekind==='examen'?'#D0506A':calOf(e).color;list.push([d,WD[wdOf(d)],it.b.start,it.b.end,kind,e.title,calOf(e).name,'']);}
+        else{const s=it.s,sub=subjById(s.subject);kind='Studie';txt=`${it.b.start}–${it.b.end}${s.done?' ✓':''}\n${s.what||sub.name}${s.what?'\n('+sub.name+')':''}`;color=sub.color;list.push([d,WD[wdOf(d)],s.start,s.end,'Studie',s.what||sub.name,sub.name,s.done?'ja':'nee']);}
+        const R=r0+s0,C=ci+1,st={...base,font:{name:'Calibri',sz:10,bold:false,color:{rgb:hexDark(color,.35)}},fill:{fgColor:{rgb:hexMix(color,.78)}},border:{top:{style:'thin',color:{rgb:hexDark(color,0)}},bottom:{style:'thin',color:{rgb:hexDark(color,0)}},left:{style:'medium',color:{rgb:hexDark(color,0)}},right:thin}};
+        const free=busy.slice(s0,s1+1).every(v=>v===null);
+        if(free){for(let k=s0;k<=s1;k++)busy[k]=R;rows[R][C]=cell(txt,st);for(let k=s0+1;k<=s1;k++)rows[r0+k][C]=cell('',st);if(s1>s0)merges.push({s:{r:R,c:C},e:{r:r0+s1,c:C}})}
+        else{const host=busy[s0]??R;const hc=rows[host][C];hc.v=(hc.v?hc.v+'\n— ook: ':'')+txt.replace(/\n/g,' ');}
+      });
+    });
+    const ws=X.utils.aoa_to_sheet(rows.map(r=>r.map(c=>c.v)));
+    rows.forEach((r,ri)=>r.forEach((c,ci)=>{const a=X.utils.encode_cell({r:ri,c:ci});if(!ws[a])ws[a]={t:'s',v:''};ws[a].s=c.s}));
+    ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:7}},...merges];
+    ws['!cols']=[{wch:7},...days.map(()=>({wch:24}))];
+    const rh=[{hpt:24},{hpt:30}];
+    if(x.tasks){const mx=Math.max(1,...rows[2].slice(1).map(c=>String(c.v).split('\n').length));rh.push({hpt:Math.min(160,14*mx+6)})}
+    if(x.dayplan)rh.push({hpt:20});
+    for(let k=0;k<nslots;k++)rh.push({hpt:16});
+    ws['!rows']=rh;
+    ws['!freeze']={xSplit:1,ySplit:2};ws['!views']=[{state:'frozen',xSplit:1,ySplit:2}];
+    let name=`Week ${parse(w).getDate()}-${parse(w).getMonth()+1}`;while(usedNames.has(name))name+='b';usedNames.add(name);
+    X.utils.book_append_sheet(wb,ws,name);
+  }
+  if(x.list){
+    list.sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:(a[2]||'')<(b[2]||'')?-1:1);
+    const hdr=['Datum','Dag','Begin','Einde','Soort','Wat','Vak / agenda','Gedaan'];
+    const ws=X.utils.aoa_to_sheet([hdr,...list.map(r=>[parse(r[0]),...r.slice(1)])],{cellDates:true});
+    hdr.forEach((_,ci)=>{const a=X.utils.encode_cell({r:0,c:ci});ws[a].s=head});
+    for(let ri=1;ri<=list.length;ri++){const a=X.utils.encode_cell({r:ri,c:0});if(ws[a]){ws[a].z='dd/mm/yyyy';ws[a].s={font:{name:'Calibri',sz:10}}}}
+    ws['!cols']=[{wch:11},{wch:11},{wch:7},{wch:7},{wch:11},{wch:40},{wch:18},{wch:8}];
+    ws['!autofilter']={ref:`A1:H${list.length+1}`};
+    X.utils.book_append_sheet(wb,ws,'Lijst');
+  }
+  return wb;
+}
+async function doExport(btn){
+  const fe=document.getElementById('xp-from'),te=document.getElementById('xp-to');if(fe)S.xp.from=fe.value;if(te)S.xp.to=te.value;
+  if(S.xp.to<S.xp.from){renderExport();return}
+  const msg=document.getElementById('xp-msg');btn.disabled=true;btn.textContent='Bezig…';
+  try{const X=await loadXlsx();const wb=buildWorkbook(X);const fn=`Voila-planning ${S.xp.from} tot ${addDays(S.xp.to,6)}.xlsx`;X.writeFile(wb,fn);closeEdit();toast('Excel gedownload')}
+  catch(e){console.error(e);if(msg)msg.textContent='Exporteren lukte niet. Controleer je internet en probeer opnieuw.';btn.disabled=false;btn.textContent='Download Excel'}
 }
 
 // ---- nieuwe taak vanuit de planning ----
@@ -996,6 +1103,10 @@ async function studyClick(act,b,e){
       let sid=s.id;if(S.subNew){sid='s'+newId();S.study.subjects=[...S.study.subjects,{id:sid,name,color:s.color,examDate:s.examDate||null}]}else S.study.subjects=S.study.subjects.map(x=>x.id===s.id?{...x,name,color:s.color,examDate:s.examDate||null}:x);
       saveStudy();const back=S.subBack,wasNew=S.subNew;if(back&&back.kind==='ss'){openStudy({...back.obj,subject:sid},back.isNew)}else if(back&&back.kind==='sd'){openSday(back.obj.date,[...back.obj.subjects,sid])}else{closeEdit()}render();toast(wasNew?'Vak toegevoegd':'Opgeslagen');return true}
     case 'subdel':if(!S.delArm){syncSub();S.delArm=true;renderSubjSheet()}else{S.study.subjects=S.study.subjects.filter(x=>x.id!==S.sub.id);saveStudy();closeEdit();render();toast('Vak verwijderd')}return true;
+    case 'xpopen':openExport();return true;
+    case 'xpt':{const f=document.getElementById('xp-from'),t2=document.getElementById('xp-to');S.xp.from=f.value;S.xp.to=t2.value;S.xp[v]=!S.xp[v];renderExport();return true}
+    case 'xpn':{const f=document.getElementById('xp-from');S.xp.from=f.value;S.xp.to=addDays(S.xp.from,(+v-1)*7);renderExport();return true}
+    case 'xpgo':doExport(b);return true;
     case 'sidetog':S.side=!S.side;lsSet('voila-side',S.side?'1':'0');render();return true;
     case 'gridnew':{const r=b.getBoundingClientRect(),hr=Math.min(23,+b.dataset.from+Math.floor((e.clientY-r.top)/HPX));openEv({type:'event',title:'',ekind:'activiteit',cal:defaultCal(),date:v,start:pad(hr)+':00',end:pad(Math.min(23,hr+1))+':'+(hr+1>23?'59':'00'),place:'',repeat:'none',until:null,skip:[]},true);return true}
     case 'tnew':openTnew(v);return true;
@@ -1048,7 +1159,7 @@ function render(){
 // ---------- bladen (sheets) ----------
 const $wrap=()=>document.getElementById('sheetwrap'),$sheet=()=>document.getElementById('sheet');
 function openSheet(kind){S.sheet=kind;S.delArm=false;$wrap().hidden=false}
-function closeEdit(){const ti=document.getElementById('e-title');if(ti&&S.editId)saveTitle(ti.value);S.editId=null;S.ev=null;S.editCal=null;S.ss=null;S.sub=null;S.bed=null;S.sd=null;S.tn=null;S.sheet=null;$wrap().hidden=true}
+function closeEdit(){const ti=document.getElementById('e-title');if(ti&&S.editId)saveTitle(ti.value);S.editId=null;S.ev=null;S.editCal=null;S.ss=null;S.sub=null;S.bed=null;S.sd=null;S.tn=null;S.xp=null;S.sheet=null;$wrap().hidden=true}
 function refreshSheet(){if(S.sheet==='task'&&S.editId)renderSheet();else if(S.sheet==='cal'&&S.editCal&&S.editCal.shared&&!S.editCal.new){const c=S.shared[S.editCal.id];if(c){S.editCal={...S.editCal,members:c.members,memberEmails:c.memberEmails,invites:c.invites,owner:c.owner}}renderCalSheet()}}
 const calPicker=(cur,act)=>`<div class="chips">${allCals().map(c=>`<button class="pick calpick ${cur===c.id?'on':''}" style="--cc:${c.color}" data-act="${act}" data-v="${c.id}"><i style="background:${c.color}"></i>${esc(c.name)}</button>`).join('')}</div>`;
 
@@ -1342,7 +1453,8 @@ document.addEventListener('keydown',e=>{
 });
 document.addEventListener('submit',e=>{if(e.target.id==='authform'){e.preventDefault();doAuth()}});
 document.addEventListener('change',e=>{
-  const t=e.target;if(!S.editId)return;
+  const t=e.target;
+  if((t.id==='xp-from'||t.id==='xp-to')&&S.xp){S.xp[t.id==='xp-from'?'from':'to']=t.value;renderExport();return}if(!S.editId)return;
   if(t.id==='e-title')saveTitle(t.value);
   if(t.id==='e-date'){upd(S.editId,{date:t.value||null});renderSheet()}
   if(t.id==='e-dl'){upd(S.editId,{deadline:t.value||null});renderSheet()}

@@ -11,6 +11,7 @@ Een rustige, ADHD-vriendelijke to-do- en weekplanner die werkt op pc, tablet en 
 - **Gedeelde agenda's** met andere Voilà-gebruikers (uitnodigen via e-mail)
 - **Stijl kiezen**: 7 kleurthema's, licht/donker/automatisch
 - **Studeerplanning**: eigen uren voor studieblokken (per weekdag of per dag), vakken met examendatum, blokken plannen en afvinken
+- **Exporteren naar Excel**: kies de weken; één tabblad per week in roostervorm + een lijst om te filteren
 - **Deadlines** met aftelling, plus je komende examens
 - **Hoofd leegmaken**: alles snel noteren, later inplannen
 - Eigen account (e-mail + wachtwoord), synchroniseert tussen al je toestellen
@@ -76,3 +77,4 @@ Rechtsboven zie je een bolletje: **groen** = gesynchroniseerd, **oranje** = offl
 | `config.js` | Je Firebase-gegevens |
 | `firestore.rules` | Beveiligingsregels voor de database |
 | `manifest.webmanifest`, `sw.js`, `icons/` | Maken het installeerbaar en offline bruikbaar |
+| `lib/xlsx-js-style.min.js` | Bibliotheek voor de Excel-export (xlsx-js-style, Apache-2.0-licentie) |
