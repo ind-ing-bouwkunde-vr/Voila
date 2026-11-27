@@ -805,7 +805,7 @@ function studyRowHtml(d,{b,s},compact){
   const now=d===today()&&b.start<=nowHM()&&nowHM()<b.end;
   if(!s)return `<button class="sblock empty ${now?'now':''}" data-act="snew" data-v="${d}|${b.start}|${b.end}"><span class="st">${b.start}–${b.end}</span><span class="sw2">+ plannen</span></button>`;
   const sub=subjById(s.subject);
-  return `<div class="sblock ${s.done?'done':''} ${now?'now':''}" style="--ec:${sub.color}"><button class="check" data-act="sdone" data-id="${s.id}">${s.done?'✓':''}</button><div class="sbody" data-act="sedit" data-id="${s.id}"><span class="st">${esc(s.start)}–${esc(s.end)}${now?' · nu':''}</span><b>${esc(sub.name)}</b>${s.what?`<span class="swhat">${esc(s.what)}</span>`:''}</div></div>`;
+  return `<div class="sblock ${s.done?'done':''} ${now?'now':''}" style="--ec:${sub.color}"><button class="check" data-act="sdone" data-id="${s.id}">${s.done?'✓':''}</button><div class="sbody" data-act="sedit" data-id="${s.id}"><span class="st">${esc(s.start)}–${esc(s.end)}${now?' · nu':''}</span><b title="${esc(sub.name)}">${esc(s.what||sub.name)}</b></div></div>`;
 }
 function studyHtmlForWeek(s){const sub=subjById(s.subject);return `<div class="les ${s.done?'past':''}" style="--ec:${sub.color}" data-act="sedit" data-id="${s.id}"><span class="lt">${esc(s.start)}–${esc(s.end)}</span><span class="kb">Studie</span><span class="ln">${s.done?'✓ ':''}${esc(sub.name)}</span>${s.what?`<span class="lp">${esc(s.what)}</span>`:''}</div>`}
 const addMin=(t,m)=>{const[a,b]=t.split(':').map(Number),x=Math.min(24*60-1,a*60+b+m);return pad(Math.floor(x/60))+':'+pad(x%60)};
@@ -822,7 +822,7 @@ function studyCell(d,list,rowEnd){
     const t=b.end!==rowEnd?`<small>${esc(b.start)}–${esc(b.end)}</small>`:'';
     if(!s)return dsub?`<button class="scell empty pre ${isNow?'now':''}" style="--ec:${dsub.color}" data-act="snew" data-v="${d}|${b.start}|${b.end}" aria-label="Blok plannen">${t}<span>${esc(dsub.name)}${dp.subjects.length>1?' …':''}</span></button>`:`<button class="scell empty ${isNow?'now':''}" data-act="snew" data-v="${d}|${b.start}|${b.end}" aria-label="Blok plannen">${t}+</button>`;
     const sub=subjById(s.subject);
-    return `<div class="scell ${s.done?'done':''} ${isNow?'now':''} ${clash?'clash':''}" style="--ec:${sub.color}"${clash?` title="Overlapt met ${esc(clash.title)}"`:''}><button class="check" data-act="sdone" data-id="${s.id}" aria-label="Afvinken">${s.done?'✓':''}</button><div class="sbody" data-act="sedit" data-id="${s.id}">${t}<b>${esc(sub.name)}</b>${s.what?`<span class="swhat">${esc(s.what)}</span>`:''}${clash?`<span class="clw">overlapt met ${(EKIND[clash.ekind||'activiteit']||'').toLowerCase()}</span>`:''}</div></div>`;
+    return `<div class="scell ${s.done?'done':''} ${isNow?'now':''} ${clash?'clash':''}" style="--ec:${sub.color}"${clash?` title="Overlapt met ${esc(clash.title)}"`:''}><button class="check" data-act="sdone" data-id="${s.id}" aria-label="Afvinken">${s.done?'✓':''}</button><div class="sbody" data-act="sedit" data-id="${s.id}">${t}<b title="${esc(sub.name)}">${esc(s.what||sub.name)}</b>${clash?`<span class="clw">overlapt met ${(EKIND[clash.ekind||'activiteit']||'').toLowerCase()}</span>`:''}</div></div>`;
   }).join('');
 }
 const HPX=52;
@@ -899,7 +899,7 @@ function vStudie(){
   let m=`<h2 class="big">Planning</h2>`+calBar();
   const rows=dayStudyRows(td).filter(r=>r.s&&!r.s.done&&r.b.end>nowHM());
   if(rows.length){const r=rows[0],sub=subjById(r.s.subject),now=r.b.start<=nowHM();
-    m+=`<div class="card snow" style="--ec:${sub.color}"><div class="flabel">${now?'Nu studeren':'Volgend blok'} · ${esc(r.s.start)}–${esc(r.s.end)}</div><div class="snowt">${esc(sub.name)}</div>${r.s.what?`<div class="swhat">${esc(r.s.what)}</div>`:''}<div class="row" style="margin-top:10px"><button class="btn" data-act="sdone" data-id="${r.s.id}">✓ Blok klaar</button>${now?`<button class="btn ghost" data-act="stimer" data-v="${minsOf(nowHM(),r.s.end)}">Timer tot ${esc(r.s.end)}</button>`:''}</div></div>`}
+    m+=`<div class="card snow" style="--ec:${sub.color}"><div class="flabel">${now?'Nu studeren':'Volgend blok'} · ${esc(r.s.start)}–${esc(r.s.end)}</div><div class="snowt" title="${esc(sub.name)}">${esc(r.s.what||sub.name)}</div><div class="row" style="margin-top:10px"><button class="btn" data-act="sdone" data-id="${r.s.id}">✓ Blok klaar</button>${now?`<button class="btn ghost" data-act="stimer" data-v="${minsOf(nowHM(),r.s.end)}">Timer tot ${esc(r.s.end)}</button>`:''}</div></div>`}
   {const dp=dayPlan(td);if(dp&&dp.subjects&&dp.subjects.length&&!rows.length)m+=`<div class="card snow" style="--ec:${subjById(dp.subjects[0]).color}"><div class="flabel">Vandaag studeer je</div><div class="snowt">${dp.subjects.map(id=>esc(subjById(id).name)).join(' · ')}</div><div class="row" style="margin-top:10px"><button class="btn ghost" data-act="sday" data-v="${td}">Verdeel over je blokken</button></div></div>`}
   m+=`<div class="smore"><button class="mini grey" data-act="swprev">↑ Vorige week tonen</button>${S.sfrom!==0||S.scount!==4?'<button class="mini grey" data-act="swnow">Terug naar deze week</button>':''}</div>`;
   const first=addDays(monday(td),S.sfrom*7);
