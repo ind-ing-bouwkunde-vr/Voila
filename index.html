@@ -346,6 +346,11 @@ nav button{font-size:11.5px}
 .scell .swhat{font-size:12px;color:var(--muted);overflow-wrap:anywhere;line-height:1.25}
 .scell.done{opacity:.55}.scell.done b{text-decoration:line-through}.scell.done .check{background:var(--accent);border-color:var(--accent)}
 .scell.now{box-shadow:0 0 0 2px var(--accent)}
+.scell.exam{background:var(--red-soft);border-left:3px solid var(--red);flex-direction:column;gap:1px;cursor:pointer}
+.scell.exam .exl{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--red)}
+.scell.exam b{color:var(--ink)}
+.scell.clash{box-shadow:inset 0 0 0 1.5px var(--red)}
+.scell .clw{font-size:11px;font-weight:800;color:var(--red)}
 </style>
 </head>
 <body>
@@ -718,28 +723,36 @@ function studyRowHtml(d,{b,s},compact){
   return `<div class="sblock ${s.done?'done':''} ${now?'now':''}" style="--ec:${sub.color}"><button class="check" data-act="sdone" data-id="${s.id}">${s.done?'✓':''}</button><div class="sbody" data-act="sedit" data-id="${s.id}"><span class="st">${esc(s.start)}–${esc(s.end)}${now?' · nu':''}</span><b>${esc(sub.name)}</b>${s.what?`<span class="swhat">${esc(s.what)}</span>`:''}</div></div>`;
 }
 function studyHtmlForWeek(s){const sub=subjById(s.subject);return `<div class="les ${s.done?'past':''}" style="--ec:${sub.color}" data-act="sedit" data-id="${s.id}"><span class="lt">${esc(s.start)}–${esc(s.end)}</span><span class="kb">Studie</span><span class="ln">${s.done?'✓ ':''}${esc(sub.name)}</span>${s.what?`<span class="lp">${esc(s.what)}</span>`:''}</div>`}
+const addMin=(t,m)=>{const[a,b]=t.split(':').map(Number),x=Math.min(24*60-1,a*60+b+m);return pad(Math.floor(x/60))+':'+pad(x%60)};
+const exEnd=e=>e.end&&e.end>e.start?e.end:addMin(e.start,120);
+const examsOn=d=>evOn(d).filter(e=>e.ekind==='examen');
+const overlapsEx=(b,e)=>e.start&&b.start<exEnd(e)&&e.start<b.end;
+const freeBlocks=d=>{const ex=examsOn(d);return dayStudyRows(d).filter(r=>!r.s&&!ex.some(e=>overlapsEx(r.b,e)))};
 function studyCell(d,list,rowEnd){
   const now=d===today(),dp=dayPlan(d),dsub=dp&&dp.subjects&&dp.subjects.length?subjById(dp.subjects[0]):null;
-  return list.map(({b,s})=>{
+  return list.map(({b,s,ex,clash})=>{
+    if(ex)return `<div class="scell exam" data-act="editev" data-id="${ex.id}" data-v="${d}"><span class="exl">Examen · ${esc(b.start)}–${esc(b.end)}</span><b>${esc(ex.title)}</b>${ex.place?`<span class="swhat">${esc(ex.place)}</span>`:''}</div>`;
     const isNow=now&&b.start<=nowHM()&&nowHM()<b.end;
     const t=b.end!==rowEnd?`<small>${esc(b.start)}–${esc(b.end)}</small>`:'';
     if(!s)return dsub?`<button class="scell empty pre ${isNow?'now':''}" style="--ec:${dsub.color}" data-act="snew" data-v="${d}|${b.start}|${b.end}" aria-label="Blok plannen">${t}<span>${esc(dsub.name)}${dp.subjects.length>1?' …':''}</span></button>`:`<button class="scell empty ${isNow?'now':''}" data-act="snew" data-v="${d}|${b.start}|${b.end}" aria-label="Blok plannen">${t}+</button>`;
     const sub=subjById(s.subject);
-    return `<div class="scell ${s.done?'done':''} ${isNow?'now':''}" style="--ec:${sub.color}"><button class="check" data-act="sdone" data-id="${s.id}" aria-label="Afvinken">${s.done?'✓':''}</button><div class="sbody" data-act="sedit" data-id="${s.id}">${t}<b>${esc(sub.name)}</b>${s.what?`<span class="swhat">${esc(s.what)}</span>`:''}</div></div>`;
+    return `<div class="scell ${s.done?'done':''} ${isNow?'now':''} ${clash?'clash':''}" style="--ec:${sub.color}"${clash?' title="Overlapt met een examen"':''}><button class="check" data-act="sdone" data-id="${s.id}" aria-label="Afvinken">${s.done?'✓':''}</button><div class="sbody" data-act="sedit" data-id="${s.id}">${t}<b>${esc(sub.name)}</b>${s.what?`<span class="swhat">${esc(s.what)}</span>`:''}${clash?'<span class="clw">overlapt met examen</span>':''}</div></div>`;
   }).join('');
 }
 function studyWeekTable(start){
   const td=today(),days=[...Array(7)].map((_,i)=>addDays(start,i)),end=days[6];
   const sm=parse(start).getMonth()===parse(end).getMonth();
   const label=sm?`${parse(start).getDate()} – ${fmt(end,{day:'numeric',month:'long'})}`:`${fmt(start,{day:'numeric',month:'short'})} – ${fmt(end,{day:'numeric',month:'short'})}`;
-  const rows=days.map(d=>dayStudyRows(d));
+  const rows=days.map(d=>{const ex=examsOn(d).filter(e=>e.start);
+    const base=dayStudyRows(d).filter(r=>r.s||!ex.some(e=>overlapsEx(r.b,e))).map(r=>r.s&&ex.some(e=>overlapsEx(r.b,e))?{...r,clash:true}:r);
+    return [...base,...ex.map(e=>({b:{start:e.start,end:exEnd(e)},ex:e}))]});
   const starts=[...new Set(rows.flat().map(r=>r.b.start))].sort();
   const wk=studyAll().filter(s=>s.date>=start&&s.date<=end),dn=wk.filter(s=>s.done);
   const hrs=m=>{const u=Math.floor(m/60),r=m%60;return u+'u'+(r?' '+r+'m':'')};
   const thisWeek=start===monday(td);
   let h=`<section class="sweek ${thisWeek?'cur':''}"><div class="sweekhead"><b>${thisWeek?'Deze week · ':''}${label}</b><span class="hint" style="margin:0">${wk.length?`<b>${dn.length}/${wk.length}</b> blokken · ${hrs(dn.reduce((a,x)=>a+minsOf(x.start,x.end),0))} van ${hrs(wk.reduce((a,x)=>a+minsOf(x.start,x.end),0))}`:'nog niets gepland'}</span><button class="mini grey" data-act="scopy" data-v="${start}">Kopieer vorige week</button></div>`;
   h+=`<div class="stable-wrap"><table class="stable"><thead><tr><th class="tcol">Blok</th>${days.map(d=>{
-    const ov=!!(S.study.over&&S.study.over[d]),ex=evOn(d).filter(e=>e.ekind==='examen');
+    const ov=!!(S.study.over&&S.study.over[d]),ex=examsOn(d).filter(e=>!e.start);
     return `<th class="${d===td?'today':''} ${d<td?'past':''}" data-act="dayblocks" data-v="${d}" title="Uren van deze dag aanpassen"><span>${WDS[wdOf(d)]}</span> ${parse(d).getDate()}/${parse(d).getMonth()+1}${ov?' <i class="ovr">✎</i>':''}${ex.map(e=>`<em title="${esc(e.title)}">examen</em>`).join('')}</th>`}).join('')}</tr></thead><tbody>`;
   h+=`<tr class="dayrow"><th class="tcol">Vak v/d dag</th>${days.map(d=>{const dp=dayPlan(d),sl=(dp&&dp.subjects||[]).map(subjById);
     return `<td class="${d===td?'today':''} ${d<td?'past':''}"><button class="sdaybtn ${sl.length?'set':''}" data-act="sday" data-v="${d}">${sl.length?sl.map(x=>`<span class="sdchip" style="--ec:${x.color}">${esc(x.name)}</span>`).join(''):'+ vak'}</button></td>`}).join('')}</tr>`;
@@ -779,7 +792,7 @@ const sdId=d=>'sd'+d.replace(/-/g,'');
 const dayPlan=d=>S.tasks[sdId(d)]||null;
 function openSday(d,subjects){const dp=dayPlan(d);S.sd={date:d,subjects:subjects||(dp&&dp.subjects?[...dp.subjects]:[])};S.editId=null;openSheet('sday');renderSdaySheet()}
 function renderSdaySheet(){
-  const s=S.sd,el=$sheet(),free=dayStudyRows(s.date).filter(r=>!r.s).length;
+  const s=S.sd,el=$sheet(),free=freeBlocks(s.date).length;
   el.innerHTML=`<div class="sheettag">Vak van de dag</div><div class="tin" style="border:0;padding-bottom:4px;text-transform:capitalize">${esc(fmt(s.date,{weekday:'long',day:'numeric',month:'long'}))}</div>
    <p class="hint" style="margin-top:0">Kies welk vak (of welke vakken) je die dag studeert. De blokken vul je later in, of meteen met de knop hieronder.</p>
    <label>Vakken</label><div class="chips">${S.study.subjects.map(sub=>`<button class="pick calpick ${s.subjects.includes(sub.id)?'on':''}" style="--cc:${sub.color}" data-act="sdsub" data-v="${sub.id}"><i style="background:${sub.color}"></i>${esc(sub.name)}</button>`).join('')}<button class="pick" data-act="subnew" data-v="from">+ nieuw vak</button></div>
@@ -856,7 +869,7 @@ async function studyClick(act,b,e){
     case 'sdsub':S.sd.subjects=S.sd.subjects.includes(v)?S.sd.subjects.filter(x=>x!==v):[...S.sd.subjects,v];renderSdaySheet();return true;
     case 'sdsave':saveSday();closeEdit();toast('Vak van de dag opgeslagen');return true;
     case 'sdclear':{const d=S.sd.date;closeEdit();del(sdId(d));toast('Gewist');return true}
-    case 'sdfill':{const s=S.sd;saveSday();const free=dayStudyRows(s.date).filter(r=>!r.s);free.forEach((r,i)=>put({id:newId(),type:'study',date:s.date,start:r.b.start,end:r.b.end,subject:s.subjects[i%s.subjects.length],what:'',done:false,cal:'school',created:Date.now()+i}));closeEdit();toast(`${free.length} blok${free.length>1?'ken':''} ingepland`);return true}
+    case 'sdfill':{const s=S.sd;saveSday();const free=freeBlocks(s.date);free.forEach((r,i)=>put({id:newId(),type:'study',date:s.date,start:r.b.start,end:r.b.end,subject:s.subjects[i%s.subjects.length],what:'',done:false,cal:'school',created:Date.now()+i}));closeEdit();toast(`${free.length} blok${free.length>1?'ken':''} ingepland`);return true}
     case 'blocksedit':openBlocks('tpl');return true;
     case 'dayblocks':openBlocks('day',v);return true;
     case 'blkwd':{syncBlocks();const err=blocksValid(S.bed.blocks);if(err){toast(err);return true}S.study.tpl={...S.study.tpl,[S.bed.wd]:sortBl(S.bed.blocks)};saveStudy();S.bed.wd=+v;S.bed.blocks=sortBl(S.study.tpl[+v]||[]).map(x=>({...x}));renderBlocksSheet();return true}
